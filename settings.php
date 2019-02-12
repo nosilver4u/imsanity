@@ -466,7 +466,8 @@ function imsanity_settings_css() {
  * and imsanity_override_site is true, then display a notice message that settings
  * are not editable instead of the settings form
  */
-function imsanity_settings_page() { ?>
+function imsanity_settings_page() {
+	?>
 	<div class="wrap">
 	<h1><?php esc_html_e( 'Imsanity Settings', 'imsanity' ); ?></h1>
 	<?php
