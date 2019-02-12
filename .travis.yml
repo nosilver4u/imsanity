@@ -15,12 +15,7 @@ php:
   - 7.2
 
 env:
-  - WP_VERSION=latest WP_MULTISITE=0
-
-matrix:
-  include:
-    - php: 7.3
-      env: WP_VERSION=latest WPSNIFF=1
+  - WP_VERSION=latest WP_MULTISITE=0 WPSNIFF=1
 
 before_script:
   - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
@@ -28,4 +23,4 @@ before_script:
   - composer global require wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer
 
 script:
-  - if [[ "$WPSNIFF" == "1" ]]; then phpcs --standard=phpcs.ruleset.xml --extensions=php .; fi
+  - phpcs --standard=phpcs.ruleset.xml --extensions=php .
