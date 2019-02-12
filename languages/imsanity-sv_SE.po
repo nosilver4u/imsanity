@@ -1,0 +1,225 @@
+# Translation of Plugins - Imsanity - Development (trunk) in Swedish
+# This file is distributed under the same license as the Plugins - Imsanity - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2015-09-23 14:53:56+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.3.0-alpha\n"
+"Language: sv_SE\n"
+"Project-Id-Version: Plugins - Imsanity - Development (trunk)\n"
+
+#. Author URI of the plugin/theme
+msgid "http://verysimple.com/"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Jason Hinkle"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Imsanity stops insanely huge image uploads"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://verysimple.com/products/imsanity/"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Imsanity"
+msgstr ""
+
+#: settings.php:628
+msgid "Save Changes"
+msgstr "Spara Ändringar"
+
+#: settings.php:619
+msgid "Convert PNG To JPG"
+msgstr ""
+
+#: settings.php:611
+msgid "Convert BMP To JPG"
+msgstr "Konvertera BMP till JPG"
+
+#: settings.php:597
+msgid "JPG image quality"
+msgstr "Bildkvalitet för JPG"
+
+#: settings.php:556
+msgid "Imsanity settings have been configured by the server administrator. There are no site-specific settings available."
+msgstr "Imsanitys inställningar har konfigurerats av serveradministratören. Det finns inga webbplatsspecifika inställningar tillgängliga."
+
+#: settings.php:539
+msgid "Search Images..."
+msgstr "Sök Bilder..."
+
+#: settings.php:532
+msgid ""
+"It is <strong>HIGHLY</strong> recommended that you backup \n"
+"\t\tyour wp-content/uploads folder before proceeding.  You will have a chance to preview and select the images to convert.\n"
+"\t\tIt is also recommended that you initially select only 1 or 2 images and verify that everything is ok before\n"
+"\t\tprocessing your entire library.  You have been warned!"
+msgstr ""
+"Du rekommenderas <strong>STARKT</strong> att ta backup på \n"
+"\t\tdin wp-content/uploads mapp innan du fortsätter. Du kommer att få möjlighet att förhandsvisa och välja bilder att konvertera.\n"
+"\t\tDu rekommenderas också att först prova med 1 eller 2 bilder och kontrollera att all är ok innan\n"
+"\t\tdu processar hela mediabiblioteket. Du har blivit varnad!"
+
+#: settings.php:530
+msgid "WARNING: BULK RESIZE WILL ALTER YOUR ORIGINAL IMAGES AND CANNOT BE UNDONE!"
+msgstr "VARNING: BULKSKALNING KOMMER ATT ÄNDRA ORIGINALBILDERNA OCH KAN INTE ÅNGRAS!"
+
+#: settings.php:519
+msgid "Bulk Resize Images"
+msgstr "Bulkskala Bilder"
+
+#: settings.php:501
+msgid "Imsanity Settings"
+msgstr "Imsanity Inställningar"
+
+#: settings.php:484
+msgid "<p>Imsanity Version %s by %s </p>"
+msgstr "<p>Imsanity Version %s av %s </p>"
+
+#: settings.php:469
+msgid ""
+"<p>Imsanity automaticaly reduces the size of images that are larger than the specified maximum and replaces the original\n"
+"\t\twith one of a more \"sane\" size.  Site contributors don\\'t need to concern themselves with manually scaling images\n"
+"\t\tand can upload them directly from their camera or phone.</p>\n"
+"\n"
+"\t\t<p>The resolution of modern cameras is larger than necessary for typical web display.\n"
+"\t\tThe average computer screen is not big enough to display a 3 megapixel camera-phone image at full resolution.\n"
+"\t\tWordPress does a good job of creating scaled-down copies which can be used, however the original images\n"
+"\t\tare permanently stored, taking up disk quota and, if used on a page, create a poor viewer experience.</p>\n"
+"\n"
+"\t\t<p>This plugin is designed for sites where high-resolution images are not necessary and/or site contributors\n"
+"\t\tdo not want (or understand how) to deal with scaling images.  This plugin should not be used on\n"
+"\t\tsites for which original, high-resolution images must be stored.</p>\n"
+"\n"
+"\t\t<p>Be sure to save back-ups of your full-sized images if you wish to keep them.</p>"
+msgstr ""
+"<p>Imsanity reducerar automatiskt storleken på bilder som är större än den specificerade maxstorleken och ersätter originalet\n"
+"\t\tmed en version som har en mer \"sund\" storlek.  Webbplatsmedarbetare behöver inte bekymra sig om att manuellt skala bilder\n"
+"\t\toch kan ladda upp dem direkt från sin kamera eller mobil.</p>\n"
+"\n"
+"\t\t<p>Upplösningen på moderna kameror är högre än nödvändigt för vanlig webbvisning.\n"
+"\t\tDen genomsnittliga datorskärmen är inte stor nog att visa en 3 megapixels bild från kamera/telefon i full upplösning.\n"
+"\t\tWordPress gör ett bra jobb med att skapa nedskalade kopior som kan användas, men originalbilderna\n"
+"\t\tlagras permanent och upptar diskutrymme och skapar en dålig visuell upplevelse för besökaren om de används på en sida.</p>\n"
+"\n"
+"\t\t<p>Detta insticksprogram är designat för webbplatser där högupplösta bilder inte är nödvändiga och/eller webbplatsmedarbetare\n"
+"\t\tinte vill (eller kan) skala bilder. Detta insticksprogram bör inte användas på\n"
+"\t\twebbplatser där högupplösta bildoriginal måste lagras.</p>\n"
+"\n"
+"\t\t<p>Se till att spara kopior av dina bildoriginal i full storlek om du vill behålla dem.</p>"
+
+#: settings.php:467
+msgid "Imsanity automatically resizes insanely huge image uploads"
+msgstr "Imsanity förminskar automatiskt uppladdade bilder som är galet stora"
+
+#: settings.php:286
+msgid "Update Settings"
+msgstr "Uppdatera Inställningar"
+
+#: settings.php:281 settings.php:607
+msgid " (WordPress default is 90)"
+msgstr " (Wordpress standardinställning är 90)"
+
+#: settings.php:271
+msgid "JPG Quality"
+msgstr "JPG-kvalitet"
+
+#: settings.php:263
+msgid "Convert PNG to JPG"
+msgstr ""
+
+#: settings.php:258 settings.php:266 settings.php:614 settings.php:622
+msgid "No"
+msgstr "Nej"
+
+#: settings.php:257 settings.php:265 settings.php:613 settings.php:621
+msgid "Yes"
+msgstr "Ja"
+
+#: settings.php:255
+msgid "Convert BMP to JPG"
+msgstr "Konvertera BMP till JPG"
+
+#: settings.php:247 settings.php:589
+msgid "Images uploaded elsewhere (Theme headers, backgrounds, logos, etc)"
+msgstr "Bilder uppladdade på andra ställen (Sidhuvud för teman, bakgrunder, logotyper, etc.)"
+
+#: settings.php:239 settings.php:582
+msgid "Images uploaded directly to the Media Library"
+msgstr "Bilder uppladdade direkt till Mediabiblioteket"
+
+#: settings.php:234 settings.php:242 settings.php:250 settings.php:577
+#: settings.php:584 settings.php:591
+msgid " (or enter 0 to disable)"
+msgstr "(eller ange 0 för att deaktivera)"
+
+#: settings.php:231 settings.php:575
+msgid "Images uploaded within a Page/Post"
+msgstr "Bilder uppladdade till en Sida/Inlägg"
+
+#: settings.php:225
+msgid "Use global Imsanity settings (below) for all sites"
+msgstr "Använd Imsanitys globala inställningar (nedan) för alla webbplatser"
+
+#: settings.php:224
+msgid "Allow each site to configure Imsanity settings"
+msgstr "Tillåt varje webbplats att konfigurera Imsanitys inställningar"
+
+#: settings.php:221
+msgid "Global Settings Override"
+msgstr "Åsidosätt Globala Inställningar"
+
+#: settings.php:207
+msgid "Imsanity network settings saved."
+msgstr "Imsanity nätverksinställningar sparades."
+
+#: settings.php:187 settings.php:200
+msgid "Imsanity Network Settings"
+msgstr "Imsanity Nätverksinställningar"
+
+#: settings.php:40
+msgid "Imsanity Plugin Settings"
+msgstr "Imsanity Programinställningar"
+
+#: libs/imagecreatefrombmp.php:129
+msgid "imagecreatefrombmp: %s has %d bits and this is not supported!"
+msgstr "imagecreatefrombmp: %s har %d bits vilket inte stöds!"
+
+#: libs/imagecreatefrombmp.php:43
+msgid "imagecreatefrombmp: Can not obtain filesize of %s !"
+msgstr "imagecreatefrombmp: Kan inte hämta filstorlek %s!"
+
+#: libs/imagecreatefrombmp.php:21
+msgid "imagecreatefrombmp: %s is not a bitmap!"
+msgstr "imagecreatefrombmp: %s är ingen bitmap!"
+
+#: libs/imagecreatefrombmp.php:14
+msgid "imagecreatefrombmp: Can not open %s!"
+msgstr "imagecreatefrombmp: Kan inte öppna %s !"
+
+#: ajax.php:185
+msgid "ERROR: (Attachment with ID of %s not found) "
+msgstr "FEL: (Bilaga med ID %s hittades ej) "
+
+#: ajax.php:179
+msgid "SKIPPED: %s (Resize not required)"
+msgstr "HOPPADE ÖVER: %s (Storleksändring behövs ej)"
+
+#: ajax.php:174
+msgid "ERROR: %s (%s)"
+msgstr "FEL: %s (%s)"
+
+#: ajax.php:170
+msgid "OK: %s"
+msgstr "OK: %s"
+
+#: ajax.php:98
+msgid "Missing ID Parameter"
+msgstr "Saknad ID-parameter"
