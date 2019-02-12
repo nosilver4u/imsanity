@@ -19,23 +19,13 @@ env:
 
 matrix:
   include:
-    - php: 7.2
-      env: WP_VERSION=latest WP_MULTISITE=1 WPSNIFF=1
     - php: 7.3
-      env: WP_VERSION=latest
+      env: WP_VERSION=latest WPSNIFF=1
 
 before_script:
   - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
   - phpenv config-rm xdebug.ini
-  - |
-    if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
-      composer global require phpunit/phpunit ^6
-    else
-      composer global require phpunit/phpunit ^5
-    fi
-  - |
   - composer global require wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer
 
 script:
   - if [[ "$WPSNIFF" == "1" ]]; then phpcs --standard=phpcs.ruleset.xml --extensions=php .; fi
-  - phpunit
