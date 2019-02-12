@@ -3,7 +3,7 @@ Contributors: nosilver4u,verysimple
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MKMQKCBFFG3WW
 Tags: image, scale, resize, space saver, quality
 Requires at least: 4.5
-Tested up to: 5.0
+Tested up to: 5.1
 Requires PHP: 5.6
 Stable tag: 2.4.2
 License: GPLv3

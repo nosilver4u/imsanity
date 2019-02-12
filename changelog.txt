@@ -1,4 +1,5 @@
 = 2.4.2 =
+* changed: noresize in filename also works in batch processing
 * fixed: error message does not contain filename when file is missing
 * fixed: notice on network settings when deep scan option has not been set before
 
