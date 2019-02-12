@@ -8,8 +8,6 @@
 [![WordPress Tested Up To](https://img.shields.io/wordpress/v/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
 [![GNU General Public License 3.0](https://img.shields.io/github/license/nosilver4u/imsanity.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
-Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually scaling? Imsanity to the rescue!
-
 ## Description
 
 Imsanity automatically resizes huge image uploads down to a size that is
