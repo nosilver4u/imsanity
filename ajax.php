@@ -60,6 +60,12 @@ function imsanity_get_images() {
 			$imageh = false;
 
 			$meta = unserialize( $image->file_meta );
+		
+			// If "noresize" is included in the filename then we will bypass imsanity scaling.
+			if ( ! empty( $meta['file'] ) && strpos( $meta['file'], 'noresize' ) !== false ) {
+				continue;
+			}
+
 			if ( imsanity_get_option( 'imsanity_deep_scan', false ) ) {
 				$file_path = imsanity_attachment_path( $meta, $image->ID, '', false );
 				if ( $file_path ) {

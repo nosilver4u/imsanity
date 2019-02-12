@@ -5,7 +5,7 @@ Tags: image, scale, resize, space saver, quality
 Requires at least: 4.5
 Tested up to: 5.0
 Requires PHP: 5.6
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 License: GPLv3
 
 Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually scaling? Imsanity to the rescue!
@@ -131,6 +131,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 == Changelog ==
 
 = 2.4.2 =
+* changed: noresize in filename also works in batch processing
 * fixed: error message does not contain filename when file is missing
 * fixed: notice on network settings when deep scan option has not been set before
 
