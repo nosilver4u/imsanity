@@ -84,6 +84,7 @@ function imsanity_queue_script( $hook ) {
 			'none_found'        => esc_html__( 'There are no images that need to be resized.', 'imsanity' ),
 		)
 	);
+	add_action( 'admin_print_styles', 'imsanity_settings_css' );
 }
 
 /**
@@ -212,15 +213,10 @@ function imsanity_maybe_created_custom_table() {
  * Display the form for the multi-site settings page.
  */
 function imsanity_network_settings() {
-	imsanity_settings_css();
+	$settings = imsanity_get_multisite_settings(); ?>
+	<div class="wrap">
+		<h1><?php esc_html_e( 'Imsanity Network Settings', 'imsanity' ); ?></h1>
 
-	echo '
-		<div class="wrap">
-		<h1>' . esc_html__( 'Imsanity Network Settings', 'imsanity' ) . '</h1>
-		';
-
-	$settings = imsanity_get_multisite_settings();
-	?>
 	<form method="post" action="settings.php?page=imsanity_network">
 	<input type="hidden" name="update_imsanity_settings" value="1" />
 	<?php wp_nonce_field( 'imsanity_network_options' ); ?>
@@ -470,10 +466,7 @@ function imsanity_settings_css() {
  * and imsanity_override_site is true, then display a notice message that settings
  * are not editable instead of the settings form
  */
-function imsanity_settings_page() {
-	imsanity_settings_css();
-
-	?>
+function imsanity_settings_page() { ?>
 	<div class="wrap">
 	<h1><?php esc_html_e( 'Imsanity Settings', 'imsanity' ); ?></h1>
 	<?php
