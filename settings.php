@@ -221,9 +221,6 @@ function imsanity_network_settings() {
 
 	$settings = imsanity_get_multisite_settings();
 	?>
-	<script type='text/javascript'>
-		jQuery(document).ready(function($) {$(".fade").fadeTo(5000,1).fadeOut(3000);});
-	</script>
 	<form method="post" action="settings.php?page=imsanity_network">
 	<input type="hidden" name="update_imsanity_settings" value="1" />
 	<?php wp_nonce_field( 'imsanity_network_options' ); ?>
@@ -477,9 +474,6 @@ function imsanity_settings_page() {
 	imsanity_settings_css();
 
 	?>
-	<script type='text/javascript'>
-		jQuery(document).ready(function($) {$(".fade").fadeTo(5000,1).fadeOut(3000);});
-	</script>
 	<div class="wrap">
 	<h1><?php esc_html_e( 'Imsanity Settings', 'imsanity' ); ?></h1>
 	<?php

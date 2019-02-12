@@ -2,6 +2,8 @@
  * imsanity admin javascript functions
  */
 
+jQuery(document).ready(function($) {$(".fade").fadeTo(5000,1).fadeOut(3000);});
+
 /**
  * Begin the process of re-sizing all of the checked images
  */
