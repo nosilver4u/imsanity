@@ -60,7 +60,7 @@ function imsanity_get_images() {
 			$imageh = false;
 
 			$meta = unserialize( $image->file_meta );
-		
+
 			// If "noresize" is included in the filename then we will bypass imsanity scaling.
 			if ( ! empty( $meta['file'] ) && strpos( $meta['file'], 'noresize' ) !== false ) {
 				continue;
