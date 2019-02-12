@@ -327,7 +327,7 @@ function imsanity_network_settings_update() {
 	$data->imsanity_bmp_to_jpg         = 1 == $_POST['imsanity_bmp_to_jpg'];
 	$data->imsanity_png_to_jpg         = 1 == $_POST['imsanity_png_to_jpg'];
 	$data->imsanity_quality            = imsanity_jpg_quality( $_POST['imsanity_quality'] );
-	$data->imsanity_deep_scan          = (bool) $_POST['imsanity_deep_scan'];
+	$data->imsanity_deep_scan          = empty( $_POST['imsanity_deep_scan'] ) ? 0 : 1;
 
 	$success = $wpdb->update(
 		$wpdb->imsanity_ms,

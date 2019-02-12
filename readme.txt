@@ -38,6 +38,10 @@ before uploading.
 
 Imsanity is available in several languages, each of which will be downloaded automatically when you install the plugin. To help translate it into your language, visit https://translate.wordpress.org/projects/wp-plugins/imsanity
 
+= Contribute =
+
+Imsanity is developed at https://github.com/nosilver4u/imsanity (pull requests are welcome)
+
 == Installation ==
 
 Automatic Installation:
