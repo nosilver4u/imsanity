@@ -40,7 +40,7 @@ function imsanity_register_network() {
 		// Need to include the plugin library for the is_plugin_active function.
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
-	if ( is_multisite() && is_plugin_active_for_network( 'imsanity/imsanity.php' ) ) {
+	if ( is_multisite() ) {
 		add_submenu_page( 'settings.php', esc_html__( 'Imsanity Network Settings', 'imsanity' ), 'Imsanity', 'manage_options', 'imsanity_network', 'imsanity_network_settings' );
 	}
 }
