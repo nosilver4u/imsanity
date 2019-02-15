@@ -41,7 +41,14 @@ function imsanity_register_network() {
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
 	if ( is_multisite() ) {
-		add_submenu_page( 'settings.php', esc_html__( 'Imsanity Network Settings', 'imsanity' ), 'Imsanity', 'manage_options', 'imsanity_network', 'imsanity_network_settings' );
+		add_submenu_page(
+            'settings.php',
+            esc_html__( 'Imsanity Network Settings', 'imsanity' ),
+            __( 'Imsanity', 'imsanity' ),
+            'manage_network_options',
+            'imsanity_network',
+            'imsanity_network_settings'
+        );
 	}
 }
 
