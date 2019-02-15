@@ -134,6 +134,9 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.5.0 (yyyy-mm-dd) =
+* enhanced: network settings - allow more flexible defaults
+
 = 2.4.2 =
 * changed: noresize in filename also works in batch processing
 * fixed: error message does not contain filename when file is missing
