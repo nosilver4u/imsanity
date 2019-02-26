@@ -33,7 +33,7 @@ function imsanity_create_menu() {
         esc_html__( 'Imsanity Plugin Settings', 'imsanity' ),
 		esc_html__( 'Imsanity', 'imsanity' ),
         'manage_options',
-        __FILE__,
+        'imsanity',
         'imsanity_settings_page'
     );
 }
