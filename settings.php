@@ -15,6 +15,7 @@ if ( ! isset( $wpdb->imsanity_ms ) ) {
 add_action( 'admin_menu', 'imsanity_create_menu' );
 add_action( 'network_admin_menu', 'imsanity_register_network' );
 add_filter( 'plugin_action_links_imsanity/imsanity.php', 'imsanity_settings_link' );
+add_filter( 'network_admin_plugin_action_links_imsanity/imsanity.php', 'imsanity_settings_link' );
 add_action( 'admin_enqueue_scripts', 'imsanity_queue_script' );
 add_action( 'admin_init', 'imsanity_register_settings' );
 
@@ -68,7 +69,11 @@ function imsanity_settings_link( $links ) {
 	if ( ! is_array( $links ) ) {
 		$links = array();
 	}
-	$settings_link = '<a href="' . get_admin_url( null, 'options-general.php?page=' . __FILE__ ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
+	if ( is_network_admin() ) {
+		$settings_link = '<a href="' . network_admin_url( 'settings.php?page=imsanity_network' ) . '">' . esc_html__( 'Network Settings', 'imsanity' ) . '</a>';
+	} else {
+		$settings_link = '<a href="' . get_admin_url( null, 'options-general.php?page=imsanity' ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
+	}
 	array_unshift( $links, $settings_link );
 	return $links;
 }
