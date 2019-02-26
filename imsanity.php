@@ -14,6 +14,7 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Text Domain: imsanity
+Domain Path: /languages
 Version: 2.4.2
 Author URI: https://ewww.io/
 License: GPLv3
