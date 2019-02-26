@@ -32,7 +32,7 @@ function imsanity_create_menu() {
 	add_options_page(
         esc_html__( 'Imsanity Plugin Settings', 'imsanity' ),
 		esc_html__( 'Imsanity', 'imsanity' ),
-        'administrator',
+        'manage_options',
         __FILE__,
         'imsanity_settings_page'
     );
