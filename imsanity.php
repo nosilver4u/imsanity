@@ -51,7 +51,7 @@ function imsanity_init() {
 /**
  * Run activation procedure
  *
- * @param $network_wide
+ * @param $network_wide Returns true if activated in network admin
  */
 function imsanity_activation( $network_wide ) {
 	require_once dirname( __FILE__ ) . '/settings.php';
@@ -97,6 +97,7 @@ function imsanity_get_source() {
  * Given the source, returns the max width/height.
  *
  * @example:  list( $w, $h ) = imsanity_get_max_width_height( IMSANITY_SOURCE_LIBRARY );
+ *
  * @param int $source One of IMSANITY_SOURCE_POST | IMSANITY_SOURCE_LIBRARY | IMSANITY_SOURCE_OTHER.
  */
 function imsanity_get_max_width_height( $source ) {
@@ -144,12 +145,16 @@ function imsanity_handle_upload( $params ) {
 	// Make sure this is a type of image that we want to convert and that it exists.
 	$oldpath = $params['file'];
 
-	if ( ( ! is_wp_error( $params ) ) && is_file( $oldpath ) && is_readable( $oldpath ) && is_writable( $oldpath ) && filesize( $oldpath ) > 0 && in_array( $params['type'], array( 'image/png', 'image/gif', 'image/jpeg' ) ) ) {
+	if ( ( ! is_wp_error( $params ) ) && is_file( $oldpath ) && is_readable( $oldpath ) && is_writable( $oldpath ) && filesize( $oldpath ) > 0 && in_array( $params['type'], array(
+			'image/png',
+			'image/gif',
+			'image/jpeg'
+		) ) ) {
 
 		// figure out where the upload is coming from.
 		$source = imsanity_get_source();
 
-		list( $maxw,$maxh ) = imsanity_get_max_width_height( $source );
+		list( $maxw, $maxh ) = imsanity_get_max_width_height( $source );
 
 		list( $oldw, $oldh ) = getimagesize( $oldpath );
 
@@ -200,7 +205,7 @@ function imsanity_handle_upload( $params ) {
 				$params = wp_handle_upload_error(
 					$oldpath,
 					sprintf(
-						/* translators: 1: error message 2: link to support forums */
+					/* translators: 1: error message 2: link to support forums */
 						esc_html__( 'Imsanity was unable to resize this image for the following reason: %1$s. If you continue to see this error message, you may need to install missing server components. If you think you have discovered a bug, please report it on the Imsanity support forum: %2$s', 'imsanity' ),
 						$resizeresult->get_error_message(),
 						'https://wordpress.org/support/plugin/imsanity'
@@ -211,6 +216,7 @@ function imsanity_handle_upload( $params ) {
 			}
 		}
 	}
+
 	return $params;
 }
 
@@ -221,7 +227,8 @@ function imsanity_handle_upload( $params ) {
  * parameters to return the new jpg instead of the original
  *
  * @param string $type Type of the image to be converted: 'bmp' or 'png'.
- * @param array  $params The upload parameters.
+ * @param array $params The upload parameters.
+ *
  * @return array altered params
  */
 function imsanity_convert_to_jpg( $type, $params ) {
@@ -274,11 +281,11 @@ function imsanity_convert_to_jpg( $type, $params ) {
 	return $params;
 }
 
-/** add filters to hook into uploads */
+/** Add filters to hook into uploads */
 add_filter( 'wp_handle_upload', 'imsanity_handle_upload' );
 add_action( 'plugins_loaded', 'imsanity_init' );
 
-add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'imsanity_settings_link' );
-add_filter( 'network_admin_plugin_action_links_' . plugin_basename(__FILE__), 'imsanity_settings_link' );
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'imsanity_settings_link' );
+add_filter( 'network_admin_plugin_action_links_' . plugin_basename( __FILE__ ), 'imsanity_settings_link' );
 
 register_activation_hook( __FILE__, 'imsanity_activation' );
