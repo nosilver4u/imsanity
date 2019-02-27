@@ -48,6 +48,11 @@ function imsanity_init() {
 	load_plugin_textdomain( 'imsanity', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
+/**
+ * Run activation procedure
+ *
+ * @param $network_wide
+ */
 function imsanity_activation( $network_wide ) {
 	require_once dirname( __FILE__ ) . '/settings.php';
 	imsanity_maybe_created_custom_table();
@@ -269,7 +274,7 @@ function imsanity_convert_to_jpg( $type, $params ) {
 	return $params;
 }
 
-/* add filters to hook into uploads */
+/** add filters to hook into uploads */
 add_filter( 'wp_handle_upload', 'imsanity_handle_upload' );
 add_action( 'plugins_loaded', 'imsanity_init' );
 

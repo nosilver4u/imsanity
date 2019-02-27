@@ -28,12 +28,12 @@ $_imsanity_multisite_settings = null;
 function imsanity_create_menu() {
 	// Create new menu for site configuration.
 	add_options_page(
-        esc_html__( 'Imsanity Plugin Settings', 'imsanity' ),
+		esc_html__( 'Imsanity Plugin Settings', 'imsanity' ),
 		esc_html__( 'Imsanity', 'imsanity' ),
-        'manage_options',
-        'imsanity',
-        'imsanity_settings_page'
-    );
+		'manage_options',
+		'imsanity',
+		'imsanity_settings_page'
+	);
 }
 
 /**
@@ -46,13 +46,13 @@ function imsanity_register_network() {
 	}
 	if ( is_multisite() ) {
 		add_submenu_page(
-            'settings.php',
-            esc_html__( 'Imsanity Network Settings', 'imsanity' ),
-            esc_html__( 'Imsanity', 'imsanity' ),
-            'manage_network_options',
-            'imsanity_network',
-            'imsanity_network_settings'
-        );
+			'settings.php',
+			esc_html__( 'Imsanity Network Settings', 'imsanity' ),
+			esc_html__( 'Imsanity', 'imsanity' ),
+			'manage_network_options',
+			'imsanity_network',
+			'imsanity_network_settings'
+		);
 	}
 }
 
