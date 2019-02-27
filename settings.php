@@ -14,12 +14,9 @@ if ( ! isset( $wpdb->imsanity_ms ) ) {
 // Register the plugin settings menu.
 add_action( 'admin_menu', 'imsanity_create_menu' );
 add_action( 'network_admin_menu', 'imsanity_register_network' );
-add_filter( 'plugin_action_links_imsanity/imsanity.php', 'imsanity_settings_link' );
-add_filter( 'network_admin_plugin_action_links_imsanity/imsanity.php', 'imsanity_settings_link' );
 add_action( 'admin_enqueue_scripts', 'imsanity_queue_script' );
 add_action( 'admin_init', 'imsanity_register_settings' );
 
-register_activation_hook( 'imsanity/imsanity.php', 'imsanity_maybe_created_custom_table' );
 
 // settings cache.
 $_imsanity_multisite_settings = null;
