@@ -370,8 +370,9 @@ function imsanity_get_multisite_settings() {
 			$_imsanity_multisite_settings->imsanity_max_height_other   = $_imsanity_multisite_settings->imsanity_max_height;
 			$_imsanity_multisite_settings->imsanity_max_width_other    = $_imsanity_multisite_settings->imsanity_max_width;
 		}
-		$_imsanity_multisite_settings->imsanity_bmp_to_jpg = ! empty( $_imsanity_multisite_settings->imsanity_bmp_to_jpg ) ? '1' : '0';
-		$_imsanity_multisite_settings->imsanity_png_to_jpg = ! empty( $_imsanity_multisite_settings->imsanity_png_to_jpg ) ? '1' : '0';
+		$_imsanity_multisite_settings->imsanity_override_site = ! empty( $_imsanity_multisite_settings->imsanity_override_site ) ? '1' : '0';
+		$_imsanity_multisite_settings->imsanity_bmp_to_jpg    = ! empty( $_imsanity_multisite_settings->imsanity_bmp_to_jpg ) ? '1' : '0';
+		$_imsanity_multisite_settings->imsanity_png_to_jpg    = ! empty( $_imsanity_multisite_settings->imsanity_png_to_jpg ) ? '1' : '0';
 		if ( ! property_exists( $_imsanity_multisite_settings, 'imsanity_deep_scan' ) ) {
 			$_imsanity_multisite_settings->imsanity_deep_scan = false;
 		}
