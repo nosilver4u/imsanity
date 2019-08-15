@@ -94,7 +94,7 @@ function imsanity_queue_script( $hook ) {
  */
 function imsanity_multisite_table_exists() {
 	global $wpdb;
-	return $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->imsanity_ms'" ) == $wpdb->imsanity_ms;
+	return $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->imsanity_ms'" ) === $wpdb->imsanity_ms;
 }
 
 /**
@@ -157,7 +157,7 @@ function imsanity_maybe_created_custom_table() {
 
 	$schema = imsanity_multisite_table_schema_version();
 
-	if ( '0' == $schema ) {
+	if ( '0' === $schema ) {
 		// This is an initial database setup.
 		$sql = 'CREATE TABLE IF NOT EXISTS ' . $wpdb->imsanity_ms . ' (
 					  setting varchar(55),
@@ -186,9 +186,9 @@ function imsanity_maybe_created_custom_table() {
 		);
 	}
 
-	if ( IMSANITY_SCHEMA_VERSION != $schema ) {
+	if ( IMSANITY_SCHEMA_VERSION !== $schema ) {
 		// This is a schema update.  for the moment there is only one schema update available, from 1.0 to 1.1.
-		if ( '1.0' == $schema ) {
+		if ( '1.0' === $schema ) {
 			// Update from version 1.0 to 1.1.
 			$wpdb->insert(
 				$wpdb->imsanity_ms,
@@ -225,8 +225,8 @@ function imsanity_network_settings() {
 	<th scope="row"><label for="imsanity_override_site"><?php esc_html_e( 'Global Settings Override', 'imsanity' ); ?></label></th>
 	<td>
 		<select name="imsanity_override_site">
-			<option value="0" <?php echo ( '0' == $settings->imsanity_override_site ) ? "selected='selected'" : ''; ?> ><?php esc_html_e( 'Allow each site to configure Imsanity settings', 'imsanity' ); ?></option>
-			<option value="1" <?php echo ( '1' == $settings->imsanity_override_site ) ? "selected='selected'" : ''; ?> ><?php esc_html_e( 'Use global Imsanity settings (below) for all sites', 'imsanity' ); ?></option>
+			<option value="0" <?php selected( $settings->imsanity_override_site, '0' ); ?> ><?php esc_html_e( 'Allow each site to configure Imsanity settings', 'imsanity' ); ?></option>
+			<option value="1" <?php selected( $settings->imsanity_override_site, '1' ); ?> ><?php esc_html_e( 'Use global Imsanity settings (below) for all sites', 'imsanity' ); ?></option>
 		</select>
 	</td>
 	</tr>
@@ -258,16 +258,16 @@ function imsanity_network_settings() {
 	<tr>
 	<th scope="row"><label for"imsanity_bmp_to_jpg"><?php esc_html_e( 'Convert BMP to JPG', 'imsanity' ); ?></label></th>
 	<td><select name="imsanity_bmp_to_jpg">
-		<option value="1" <?php echo ( '1' == $settings->imsanity_bmp_to_jpg ) ? "selected='selected'" : ''; ?> ><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
-		<option value="0" <?php echo ( '0' == $settings->imsanity_bmp_to_jpg ) ? "selected='selected'" : ''; ?> ><?php esc_html_e( 'No', 'imsanity' ); ?></option>
+		<option value="1" <?php selected( $settings->imsanity_bmp_to_jpg, '1' ); ?> ><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
+		<option value="0" <?php selected( $settings->imsanity_bmp_to_jpg, '0' ); ?> ><?php esc_html_e( 'No', 'imsanity' ); ?></option>
 	</select></td>
 	</tr>
 
 	<tr>
 	<th scope="row"><label for="imsanity_png_to_jpg"><?php esc_html_e( 'Convert PNG to JPG', 'imsanity' ); ?></label></th>
 	<td><select name="imsanity_png_to_jpg">
-		<option value="1" <?php echo ( '1' == $settings->imsanity_png_to_jpg ) ? "selected='selected'" : ''; ?> ><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
-		<option value="0" <?php echo ( '0' == $settings->imsanity_png_to_jpg ) ? "selected='selected'" : ''; ?> ><?php esc_html_e( 'No', 'imsanity' ); ?></option>
+		<option value="1" <?php selected( $settings->imsanity_png_to_jpg, '1' ); ?> ><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
+		<option value="0" <?php selected( $settings->imsanity_png_to_jpg, '0' ); ?> ><?php esc_html_e( 'No', 'imsanity' ); ?></option>
 	</select></td>
 	</tr>
 
@@ -310,15 +310,15 @@ function imsanity_network_settings_update() {
 
 	$data = new stdClass();
 
-	$data->imsanity_override_site      = 1 == $_POST['imsanity_override_site'];
+	$data->imsanity_override_site      = (bool) $_POST['imsanity_override_site'];
 	$data->imsanity_max_height         = sanitize_text_field( $_POST['imsanity_max_height'] );
 	$data->imsanity_max_width          = sanitize_text_field( $_POST['imsanity_max_width'] );
 	$data->imsanity_max_height_library = sanitize_text_field( $_POST['imsanity_max_height_library'] );
 	$data->imsanity_max_width_library  = sanitize_text_field( $_POST['imsanity_max_width_library'] );
 	$data->imsanity_max_height_other   = sanitize_text_field( $_POST['imsanity_max_height_other'] );
 	$data->imsanity_max_width_other    = sanitize_text_field( $_POST['imsanity_max_width_other'] );
-	$data->imsanity_bmp_to_jpg         = 1 == $_POST['imsanity_bmp_to_jpg'];
-	$data->imsanity_png_to_jpg         = 1 == $_POST['imsanity_png_to_jpg'];
+	$data->imsanity_bmp_to_jpg         = (bool) $_POST['imsanity_bmp_to_jpg'];
+	$data->imsanity_png_to_jpg         = (bool) $_POST['imsanity_png_to_jpg'];
 	$data->imsanity_quality            = imsanity_jpg_quality( $_POST['imsanity_quality'] );
 	$data->imsanity_deep_scan          = empty( $_POST['imsanity_deep_scan'] ) ? 0 : 1;
 
@@ -370,6 +370,8 @@ function imsanity_get_multisite_settings() {
 			$_imsanity_multisite_settings->imsanity_max_height_other   = $_imsanity_multisite_settings->imsanity_max_height;
 			$_imsanity_multisite_settings->imsanity_max_width_other    = $_imsanity_multisite_settings->imsanity_max_width;
 		}
+		$_imsanity_multisite_settings->imsanity_bmp_to_jpg = ! empty( $_imsanity_multisite_settings->imsanity_bmp_to_jpg ) ? '1' : '0';
+		$_imsanity_multisite_settings->imsanity_png_to_jpg = ! empty( $_imsanity_multisite_settings->imsanity_png_to_jpg ) ? '1' : '0';
 		if ( ! property_exists( $_imsanity_multisite_settings, 'imsanity_deep_scan' ) ) {
 			$_imsanity_multisite_settings->imsanity_deep_scan = false;
 		}
@@ -569,16 +571,16 @@ function imsanity_settings_page_form() {
 		<tr>
 		<th scope="row"><label for="imsanity_bmp_to_jpg"><?php esc_html_e( 'Convert BMP To JPG', 'imsanity' ); ?></label></th>
 		<td><select name="imsanity_bmp_to_jpg">
-			<option <?php echo ( '1' == get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ) ? "selected='selected'" : ''; ?> value="1"><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
-			<option <?php echo ( '0' == get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ) ? "selected='selected'" : ''; ?> value="0"><?php esc_html_e( 'No', 'imsanity' ); ?></option>
+			<option <?php selected( get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ), '1' ); ?> value="1"><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
+			<option <?php selected( get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ), '0' ); ?> value="0"><?php esc_html_e( 'No', 'imsanity' ); ?></option>
 		</select></td>
 		</tr>
 
 		<tr>
 		<th scope="row"><label for="imsanity_png_to_jpg"><?php esc_html_e( 'Convert PNG To JPG', 'imsanity' ); ?></label></th>
 		<td><select name="imsanity_png_to_jpg">
-			<option <?php echo ( '1' == get_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG ) ) ? "selected='selected'" : ''; ?> value="1"><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
-			<option <?php echo ( '0' == get_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG ) ) ? "selected='selected'" : ''; ?> value="0"><?php esc_html_e( 'No', 'imsanity' ); ?></option>
+			<option <?php selected( get_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG ), '1' ); ?> value="1"><?php esc_html_e( 'Yes', 'imsanity' ); ?></option>
+			<option <?php selected( get_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG ), '0' ); ?> value="0"><?php esc_html_e( 'No', 'imsanity' ); ?></option>
 		</select></td>
 		</tr>
 

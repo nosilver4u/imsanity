@@ -30,7 +30,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 		// read file header.
 		$meta = unpack( 'vtype/Vfilesize/Vreserved/Voffset', fread( $fh, 14 ) );
 		// check for bitmap.
-		if ( 19778 != $meta['type'] ) {
+		if ( 19778 !== (int) $meta['type'] ) {
 			/* translators: %s: the image filename */
 			trigger_error( sprintf( __( 'imagecreatefrombmp: %s is not a bitmap!', 'imsanity' ), $filename ), E_USER_WARNING );
 			return false;
@@ -40,7 +40,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 		$bytes_read = 40;
 
 		// read additional bitfield header.
-		if ( 3 == $meta['compression'] ) {
+		if ( 3 === (int) $meta['compression'] ) {
 			$meta       += unpack( 'VrMask/VgMask/VbMask', fread( $fh, 12 ) );
 			$bytes_read += 12;
 		}
@@ -48,7 +48,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 		// set bytes and padding.
 		$meta['bytes'] = $meta['bits'] / 8;
 		$meta['decal'] = 4 - ( 4 * ( ( $meta['width'] * $meta['bytes'] / 4 ) - floor( $meta['width'] * $meta['bytes'] / 4 ) ) );
-		if ( 4 == $meta['decal'] ) {
+		if ( 4 === (int) $meta['decal'] ) {
 			$meta['decal'] = 0;
 		}
 
@@ -126,7 +126,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 							return $im;
 						}
 						$color = unpack( 'v', $part );
-						if ( empty( $meta['rMask'] ) || 0xf800 != $meta['rMask'] ) {
+						if ( empty( $meta['rMask'] ) || 0xf800 !== (int) $meta['rMask'] ) {
 							$color[1] = ( ( $color[1] & 0x7c00 ) >> 7 ) * 65536 + ( ( $color[1] & 0x03e0 ) >> 2 ) * 256 + ( ( $color[1] & 0x001f ) << 3 ); // 555.
 						} else {
 							$color[1] = ( ( $color[1] & 0xf800 ) >> 8 ) * 65536 + ( ( $color[1] & 0x07e0 ) >> 3 ) * 256 + ( ( $color[1] & 0x001f ) << 3 ); // 565.
@@ -138,7 +138,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 						break;
 					case 4:
 						$color    = unpack( 'n', $vide . substr( $data, floor( $p ), 1 ) );
-						$color[1] = 0 == ( $p * 2 ) % 2 ? $color[1] >> 4 : $color[1] & 0x0F;
+						$color[1] = 0 === ( $p * 2 ) % 2 ? $color[1] >> 4 : $color[1] & 0x0F;
 						$color[1] = $palette[ $color[1] + 1 ];
 						break;
 					case 1:
@@ -263,12 +263,12 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 					$i++;
 					switch ( ord( $str[ $i ] ) ) {
 						case 0: // NEW LINE.
-							while ( 0 != count( $pixels ) % $linewidth ) {
+							while ( 0 !== count( $pixels ) % $linewidth ) {
 								$pixels[] = 0;
 							}
 							break;
 						case 1: // END OF FILE.
-							while ( 0 != count( $pixels ) % $linewidth ) {
+							while ( 0 !== count( $pixels ) % $linewidth ) {
 								$pixels[] = 0;
 							}
 							break 3;
@@ -278,7 +278,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 						default: // ABSOLUTE MODE.
 							$num = ord( $str[ $i ] );
 							for ( $j = 0; $j < $num; $j++ ) {
-								if ( 0 == $j % 2 ) {
+								if ( 0 === $j % 2 ) {
 									$c        = ord( $str[ ++$i ] );
 									$pixels[] = ( $c & 240 ) >> 4;
 								} else {
@@ -286,7 +286,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 								}
 							}
 
-							if ( 0 == $num % 2 ) {
+							if ( 0 === $num % 2 ) {
 								$i++;
 							}
 					}
@@ -294,7 +294,7 @@ if ( ! function_exists( 'imagecreatefrombmp' ) ) {
 				default:
 					$c = ord( $str[ ++$i ] );
 					for ( $j = 0; $j < $o; $j++ ) {
-						$pixels[] = ( 0 == $j % 2 ? ( $c & 240 ) >> 4 : $c & 15 );
+						$pixels[] = ( 0 === $j % 2 ? ( $c & 240 ) >> 4 : $c & 15 );
 					}
 			}
 		}

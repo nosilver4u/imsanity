@@ -137,7 +137,8 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 = 2.4.3 =
 * changed: default size from 2048 to 1920
 * fixed: WP Import plugin breaks during Media imports
-* fixed: setting a value to 0 causes errors on multi-site installs
+* fixed: setting a value to 0 causes errors on multi-site
+* fixed: conversion settings not displaying correctly on multi-site
 
 = 2.4.2 =
 * changed: noresize in filename also works in batch processing
