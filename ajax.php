@@ -165,7 +165,7 @@ function imsanity_resize_image() {
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
 				$newpath = $resizeresult;
 
-				if ( $newpath != $oldpath && is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
+				if ( $newpath !== $oldpath && is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
 					// we saved some file space. remove original and replace with resized image.
 					unlink( $oldpath );
 					rename( $newpath, $oldpath );
@@ -180,7 +180,7 @@ function imsanity_resize_image() {
 						/* translators: %s: File-name of the image */
 						'message' => sprintf( esc_html__( 'OK: %s', 'imsanity' ), $oldpath ),
 					);
-				} elseif ( $newpath != $oldpath ) {
+				} elseif ( $newpath !== $oldpath ) {
 					// the resized image is actually bigger in filesize (most likely due to jpg quality).
 					// keep the old one and just get rid of the resized image.
 					if ( is_file( $newpath ) ) {

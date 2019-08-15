@@ -96,7 +96,7 @@ function imsanity_get_orientation( $file, $type ) {
 	if ( function_exists( 'exif_read_data' ) && 'image/jpeg' === $type ) {
 		$exif = @exif_read_data( $file );
 		if ( is_array( $exif ) && array_key_exists( 'Orientation', $exif ) ) {
-			return $exif['Orientation'];
+			return (int) $exif['Orientation'];
 		}
 	}
 	return false;

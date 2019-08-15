@@ -15,7 +15,7 @@ php:
   - 7.2
 
 env:
-  - WP_VERSION=latest WP_MULTISITE=0 WPSNIFF=1
+  - WP_VERSION=latest WP_MULTISITE=0
 
 before_script:
   - export PATH="$HOME/.config/composer/vendor/bin:$PATH"

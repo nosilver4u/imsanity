@@ -1,3 +1,8 @@
+= 2.4.3 =
+* changed: default size from 2048 to 1920
+* fixed: WP Import plugin breaks during Media imports
+* fixed: setting a value to 0 causes errors on multi-site installs
+
 = 2.4.2 =
 * changed: noresize in filename also works in batch processing
 * fixed: error message does not contain filename when file is missing

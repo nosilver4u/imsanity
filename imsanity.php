@@ -14,7 +14,7 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Text Domain: imsanity
-Version: 2.4.2
+Version: 2.4.3
 Author URI: https://ewww.io/
 License: GPLv3
 */
@@ -23,11 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.4.2' );
+define( 'IMSANITY_VERSION', '2.4.3' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
-define( 'IMSANITY_DEFAULT_MAX_WIDTH', 2048 );
-define( 'IMSANITY_DEFAULT_MAX_HEIGHT', 2048 );
+define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
+define( 'IMSANITY_DEFAULT_MAX_HEIGHT', 1920 );
 define( 'IMSANITY_DEFAULT_BMP_TO_JPG', 1 );
 define( 'IMSANITY_DEFAULT_PNG_TO_JPG', 0 );
 define( 'IMSANITY_DEFAULT_QUALITY', 82 );
@@ -74,7 +74,7 @@ function imsanity_get_source() {
 	}
 
 	// Post_id of 0 is 3.x otherwise use the action parameter.
-	if ( 0 === $id || 'upload-attachment' == $action ) {
+	if ( 0 === $id || 'upload-attachment' === $action ) {
 		return IMSANITY_SOURCE_LIBRARY;
 	}
 
@@ -122,18 +122,18 @@ function imsanity_handle_upload( $params ) {
 	}
 
 	// If preferences specify so then we can convert an original bmp or png file into jpg.
-	if ( 'image/bmp' == $params['type'] && imsanity_get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ) {
+	if ( 'image/bmp' === $params['type'] && imsanity_get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ) {
 		$params = imsanity_convert_to_jpg( 'bmp', $params );
 	}
 
-	if ( 'image/png' == $params['type'] && imsanity_get_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG ) ) {
+	if ( 'image/png' === $params['type'] && imsanity_get_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG ) ) {
 		$params = imsanity_convert_to_jpg( 'png', $params );
 	}
 
 	// Make sure this is a type of image that we want to convert and that it exists.
 	$oldpath = $params['file'];
 
-	if ( ( ! is_wp_error( $params ) ) && is_file( $oldpath ) && is_readable( $oldpath ) && is_writable( $oldpath ) && filesize( $oldpath ) > 0 && in_array( $params['type'], array( 'image/png', 'image/gif', 'image/jpeg' ) ) ) {
+	if ( ( ! is_wp_error( $params ) ) && is_file( $oldpath ) && is_readable( $oldpath ) && is_writable( $oldpath ) && filesize( $oldpath ) > 0 && in_array( $params['type'], array( 'image/png', 'image/gif', 'image/jpeg' ), true ) ) {
 
 		// figure out where the upload is coming from.
 		$source = imsanity_get_source();
@@ -148,7 +148,7 @@ function imsanity_handle_upload( $params ) {
 			$ftype       = imsanity_quick_mimetype( $oldpath );
 			$orientation = imsanity_get_orientation( $oldpath, $ftype );
 			// If we are going to rotate the image 90 degrees during the resize, swap the existing image dimensions.
-			if ( 6 == $orientation || 8 == $orientation ) {
+			if ( 6 === (int) $orientation || 8 === (int) $orientation ) {
 				$old_oldw = $oldw;
 				$oldw     = $oldh;
 				$oldh     = $old_oldw;
@@ -200,6 +200,7 @@ function imsanity_handle_upload( $params ) {
 			}
 		}
 	}
+	clearstatcache();
 	return $params;
 }
 
@@ -217,10 +218,10 @@ function imsanity_convert_to_jpg( $type, $params ) {
 
 	$img = null;
 
-	if ( 'bmp' == $type ) {
+	if ( 'bmp' === $type ) {
 		include_once( 'libs/imagecreatefrombmp.php' );
 		$img = imagecreatefrombmp( $params['file'] );
-	} elseif ( 'png' == $type ) {
+	} elseif ( 'png' === $type ) {
 		if ( ! function_exists( 'imagecreatefrompng' ) ) {
 			return wp_handle_upload_error( $params['file'], esc_html__( 'Imsanity requires the GD library to convert PNG images to JPG', 'imsanity' ) );
 		}

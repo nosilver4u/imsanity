@@ -1,11 +1,11 @@
 === Imsanity ===
-Contributors: nosilver4u,verysimple
+Contributors: nosilver4u
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MKMQKCBFFG3WW
 Tags: image, scale, resize, space saver, quality
-Requires at least: 4.5
-Tested up to: 5.1
+Requires at least: 4.9
+Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 License: GPLv3
 
 Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually scaling? Imsanity to the rescue!
@@ -134,6 +134,11 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.4.3 =
+* changed: default size from 2048 to 1920
+* fixed: WP Import plugin breaks during Media imports
+* fixed: setting a value to 0 causes errors on multi-site installs
+
 = 2.4.2 =
 * changed: noresize in filename also works in batch processing
 * fixed: error message does not contain filename when file is missing
@@ -142,7 +147,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 = 2.4.1 =
 * fixed: bulk resizer scan returning incorrect results
 * fixed: sprintf error during resizing and upload
- 
+
 = 2.4.0 =
 * added: deep scanning option for when attachment metadata isn't updating properly
 * fixed: uploads from Gutenberg not detected properly

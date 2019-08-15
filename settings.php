@@ -364,7 +364,7 @@ function imsanity_get_multisite_settings() {
 			: imsanity_get_default_multisite_settings();
 
 		// this is for backwards compatibility.
-		if ( empty( $_imsanity_multisite_settings->imsanity_max_height_library ) ) {
+		if ( ! isset( $_imsanity_multisite_settings->imsanity_max_height_library ) ) {
 			$_imsanity_multisite_settings->imsanity_max_height_library = $_imsanity_multisite_settings->imsanity_max_height;
 			$_imsanity_multisite_settings->imsanity_max_width_library  = $_imsanity_multisite_settings->imsanity_max_width;
 			$_imsanity_multisite_settings->imsanity_max_height_other   = $_imsanity_multisite_settings->imsanity_max_height;
