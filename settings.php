@@ -84,7 +84,7 @@ function imsanity_queue_script( $hook ) {
 			'none_found'        => esc_html__( 'There are no images that need to be resized.', 'imsanity' ),
 		)
 	);
-	add_action( 'admin_print_styles', 'imsanity_settings_css' );
+	add_action( 'admin_print_scripts', 'imsanity_settings_css' );
 }
 
 /**
@@ -214,8 +214,26 @@ function imsanity_maybe_created_custom_table() {
  */
 function imsanity_network_settings() {
 	$settings = imsanity_get_multisite_settings(); ?>
-	<div class="wrap">
-		<h1><?php esc_html_e( 'Imsanity Network Settings', 'imsanity' ); ?></h1>
+<div class="wrap">
+	<h1><?php esc_html_e( 'Imsanity Network Settings', 'imsanity' ); ?></h1>
+
+	<div id="ewwwio-promo">
+		<p>
+		<?php
+		printf(
+			/* translators: %s: link to install EWWW Image Optimizer plugin */
+			esc_html__( 'Get comprehensive image optimization with %s', 'imsanity' ),
+			'<br><a href="' . admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) . '">EWWW Image Optimizer</a>'
+		);
+		?>
+			<ul>
+				<li><?php esc_html_e( 'Full Compression', 'imsanity' ); ?></li>
+				<li><?php esc_html_e( 'Automatic Scaling', 'imsanity' ); ?></li>
+				<li><?php esc_html_e( 'Lazy Load', 'imsanity' ); ?></li>
+				<li><?php esc_html_e( 'WebP Conversion', 'imsanity' ); ?></li>
+			</ul>
+		</p>
+	</div>
 
 	<form method="post" action="settings.php?page=imsanity_network">
 	<input type="hidden" name="update_imsanity_settings" value="1" />
@@ -236,6 +254,7 @@ function imsanity_network_settings() {
 	<td>
 		<label for="imsanity_max_width"><?php esc_html_e( 'Max Width', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class='small-text' name="imsanity_max_width" value="<?php echo (int) $settings->imsanity_max_width; ?>" />
 		<label for="imsanity_max_height"><?php esc_html_e( 'Max Height', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_height" value="<?php echo (int) $settings->imsanity_max_height; ?>" /> <?php esc_html_e( 'in pixels, enter 0 to disable', 'imsanity' ); ?>
+		<p class="description"><?php esc_html_e( 'These dimensions are used for Bulk Resizing also.', 'imsanity' ); ?></p>
 	</td>
 	</tr>
 
@@ -287,9 +306,9 @@ function imsanity_network_settings() {
 	<p class="submit"><input type="submit" class="button-primary" value="<?php esc_attr_e( 'Update Settings', 'imsanity' ); ?>" /></p>
 
 	</form>
-	<?php
 
-	echo '</div>';
+</div>
+	<?php
 }
 
 /**
@@ -450,8 +469,8 @@ function imsanity_jpg_quality( $quality = null ) {
  * for both site and network settings page
  */
 function imsanity_settings_css() {
-	echo '
-	<style>
+	?>
+<style>
 	#imsanity_header {
 		border: solid 1px #c6c6c6;
 		margin: 10px 0px;
@@ -461,7 +480,32 @@ function imsanity_settings_css() {
 	#imsanity_header p {
 		margin: .5em 0;
 	}
-	</style>';
+	#ewwwio-promo {
+		display: none;
+		float: right;
+	}
+	#ewwwio-promo a, #ewwwio-promo a:visited {
+		color: #3eadc9;
+	}
+	#ewwwio-promo ul {
+		list-style: disc;
+		padding-left: 13px;
+	}
+	@media screen and (min-width: 850px) {
+		.form-table {
+			clear: left;
+			width: calc(100% - 210px);
+		}
+		#ewwwio-promo {
+			display: block;
+			border: 1px solid #7e8993;
+			padding: 13px;
+			margin: 13px;
+			width: 150px;
+		}
+	}
+</style>
+	<?php
 }
 
 /**
@@ -473,6 +517,25 @@ function imsanity_settings_page() {
 	?>
 	<div class="wrap">
 	<h1><?php esc_html_e( 'Imsanity Settings', 'imsanity' ); ?></h1>
+
+	<div id="ewwwio-promo">
+		<p>
+		<?php
+		printf(
+			/* translators: %s: link to install EWWW Image Optimizer plugin */
+			esc_html__( 'Get comprehensive image optimization with %s', 'imsanity' ),
+			'<br><a href="' . admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) . '">EWWW Image Optimizer</a>'
+		);
+		?>
+			<ul>
+				<li><?php esc_html_e( 'Full Compression', 'imsanity' ); ?></li>
+				<li><?php esc_html_e( 'Automatic Scaling', 'imsanity' ); ?></li>
+				<li><?php esc_html_e( 'Lazy Load', 'imsanity' ); ?></li>
+				<li><?php esc_html_e( 'WebP Conversion', 'imsanity' ); ?></li>
+			</ul>
+		</p>
+	</div>
+
 	<?php
 
 	$settings = imsanity_get_multisite_settings();
@@ -543,6 +606,7 @@ function imsanity_settings_page_form() {
 		<td>
 			<label for="imsanity_max_width"><?php esc_html_e( 'Max Width', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_width" value="<?php echo (int) get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH ); ?>" />
 			<label for="imsanity_max_height"><?php esc_html_e( 'Max Height', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_height" value="<?php echo (int) get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT ); ?>" /> <?php esc_html_e( 'in pixels, enter 0 to disable', 'imsanity' ); ?>
+			<p class="description"><?php esc_html_e( 'These dimensions are used for Bulk Resizing also.', 'imsanity' ); ?></p>
 		</td>
 		</tr>
 

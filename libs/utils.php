@@ -141,7 +141,8 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 
 		$ftype = imsanity_quick_mimetype( $file );
 
-		$orientation = imsanity_get_orientation( $file, $ftype );
+		// Return 1 to override auto-rotate.
+		$orientation = (int) apply_filters( 'imsanity_orientation', imsanity_get_orientation( $file, $ftype ) );
 		// Try to correct for auto-rotation if the info is available.
 		switch ( $orientation ) {
 			case 3:
@@ -162,10 +163,8 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 
 		$dest_file = $editor->generate_filename( $suffix, $dest_path );
 
-		// FIX: make sure that the destination file does not exist.  this fixes
-		// an issue during bulk resize where one of the optimized media filenames may get
-		// used as the temporary file, which causes it to be deleted.
-		while ( file_exists( $dest_file ) ) {
+		// Make sure that the destination file does not exist.
+		if ( file_exists( $dest_file ) ) {
 			$dest_file = $editor->generate_filename( 'TMP', $dest_path );
 		}
 

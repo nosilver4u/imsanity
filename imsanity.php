@@ -14,7 +14,7 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Text Domain: imsanity
-Version: 2.4.3
+Version: 2.4.4
 Author URI: https://ewww.io/
 License: GPLv3
 */
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.4.3' );
+define( 'IMSANITY_VERSION', '2.4.4' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
@@ -105,7 +105,8 @@ function imsanity_get_max_width_height( $source ) {
 			break;
 	}
 
-	return array( $w, $h );
+	// NOTE: filters MUST return an array of 2 items, or the defaults will be used.
+	return apply_filters( 'imsanity_get_max_width_height', array( $w, $h ), $source );
 }
 
 /**
@@ -133,12 +134,32 @@ function imsanity_handle_upload( $params ) {
 	// Make sure this is a type of image that we want to convert and that it exists.
 	$oldpath = $params['file'];
 
-	if ( ( ! is_wp_error( $params ) ) && is_file( $oldpath ) && is_readable( $oldpath ) && is_writable( $oldpath ) && filesize( $oldpath ) > 0 && in_array( $params['type'], array( 'image/png', 'image/gif', 'image/jpeg' ), true ) ) {
+	// Let folks filter the allowed mime-types for resizing.
+	$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $oldpath );
+	if ( is_string( $allowed_types ) ) {
+		$allowed_types = array( $allowed_types );
+	} elseif ( ! is_array( $allowed_types ) ) {
+		$allowed_types = array();
+	}
+
+	if (
+		( ! is_wp_error( $params ) ) &&
+		is_file( $oldpath ) &&
+		is_readable( $oldpath ) &&
+		is_writable( $oldpath ) &&
+		filesize( $oldpath ) > 0 &&
+		in_array( $params['type'], $allowed_types, true )
+	) {
 
 		// figure out where the upload is coming from.
 		$source = imsanity_get_source();
 
-		list( $maxw,$maxh ) = imsanity_get_max_width_height( $source );
+		$maxw             = IMSANITY_DEFAULT_MAX_WIDTH;
+		$maxh             = IMSANITY_DEFAULT_MAX_HEIGHT;
+		$max_width_height = imsanity_get_max_width_height( $source );
+		if ( is_array( $max_width_height ) && 2 === count( $max_width_height ) ) {
+			list( $maxw, $maxh ) = $max_width_height;
+		}
 
 		list( $oldw, $oldh ) = getimagesize( $oldpath );
 
@@ -161,11 +182,14 @@ function imsanity_handle_upload( $params ) {
 				list( $neww, $newh ) = wp_constrain_dimensions( $oldw, $oldh, $maxw, $maxh );
 			}
 
-			remove_filter( 'wp_image_editors', 'ewww_image_optimizer_load_editor', 60 );
-			$resizeresult = imsanity_image_resize( $oldpath, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
-			if ( function_exists( 'ewww_image_optimizer_load_editor' ) ) {
-				add_filter( 'wp_image_editors', 'ewww_image_optimizer_load_editor', 60 );
+			global $ewww_preempt_editor;
+			if ( ! isset( $ewww_preempt_editor ) ) {
+				$ewww_preempt_editor = false;
 			}
+			$original_preempt    = $ewww_preempt_editor;
+			$ewww_preempt_editor = true;
+			$resizeresult        = imsanity_image_resize( $oldpath, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
+			$ewww_preempt_editor = $original_preempt;
 
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
 				$newpath = $resizeresult;

@@ -13,7 +13,7 @@ add_action( 'wp_ajax_imsanity_resize_image', 'imsanity_resize_image' );
  * renders a json warning and dies
  */
 function imsanity_verify_permission() {
-	if ( ! current_user_can( 'activate_plugins' ) ) { // this isn't a real capability, but super admins can do anything, so it works.
+	if ( ! current_user_can( 'activate_plugins' ) ) {
 		die(
 			json_encode(
 				array(
@@ -52,7 +52,6 @@ function imsanity_get_images() {
 	$count   = 0;
 
 	$images = $wpdb->get_results( $wpdb->prepare( "SELECT metas.meta_value as file_meta,metas.post_id as ID FROM $wpdb->postmeta metas INNER JOIN $wpdb->posts posts ON posts.ID = metas.post_id WHERE posts.post_type = 'attachment' AND posts.post_mime_type LIKE %s AND posts.post_mime_type != 'image/bmp' AND metas.meta_key = '_wp_attachment_metadata' ORDER BY ID DESC LIMIT %d,%d", '%image%', $offset, $limit ) );
-	/* $images = $wpdb->get_results( "SELECT metas.meta_value as file_meta,metas.post_id as ID FROM $wpdb->postmeta metas INNER JOIN $wpdb->posts posts ON posts.ID = metas.post_id WHERE posts.post_type LIKE 'attachment' AND posts.post_mime_type LIKE 'image%%' AND posts.post_mime_type NOT LIKE 'image/bmp' AND metas.meta_key = '_wp_attachment_metadata' LIMIT $offset,$limit" ); */
 	while ( $images ) {
 
 		foreach ( $images as $image ) {
@@ -63,6 +62,18 @@ function imsanity_get_images() {
 
 			// If "noresize" is included in the filename then we will bypass imsanity scaling.
 			if ( ! empty( $meta['file'] ) && strpos( $meta['file'], 'noresize' ) !== false ) {
+				continue;
+			}
+
+			// Let folks filter the allowed mime-types for resizing.
+			$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $meta['file'] );
+			if ( is_string( $allowed_types ) ) {
+				$allowed_types = array( $allowed_types );
+			} elseif ( ! is_array( $allowed_types ) ) {
+				$allowed_types = array();
+			}
+			$ftype = imsanity_quick_mimetype( $meta['file'] );
+			if ( ! in_array( $ftype, $allowed_types, true ) ) {
 				continue;
 			}
 
