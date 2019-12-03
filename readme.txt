@@ -139,6 +139,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 * added: imsanity_allowed_mimes filter to override the default list of image formats allowed
 * added: imsanity_orientation filter to modify auto-rotation behavior, return 1 to bypass
 * added: imsanity_get_max_width_height filter to customize max width/height
+* fixed: settings link on plugins page broken in some cases
 
 = 2.4.3 =
 * changed: default size from 2048 to 1920

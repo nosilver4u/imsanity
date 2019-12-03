@@ -41,6 +41,19 @@ if ( ! defined( 'IMSANITY_AJAX_MAX_RECORDS' ) ) {
 }
 
 /**
+ * The full path of the main plugin file.
+ *
+ * @var string IMSANITY_PLUGIN_FILE
+ */
+define( 'IMSANITY_PLUGIN_FILE', __FILE__ );
+/**
+ * The path of the main plugin file, relative to the plugins/ folder.
+ *
+ * @var string IMSANITY_PLUGIN_FILE_REL
+ */
+define( 'IMSANITY_PLUGIN_FILE_REL', plugin_basename( __FILE__ ) );
+
+/**
  * Load translations for Imsanity.
  */
 function imsanity_init() {
