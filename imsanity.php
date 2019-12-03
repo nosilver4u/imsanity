@@ -188,7 +188,7 @@ function imsanity_handle_upload( $params ) {
 				$oldh     = $old_oldw;
 			}
 
-			if ( $oldw > $maxw && $maxw > 0 && $oldh > $maxh && $maxh > 0 && apply_filters( 'imsanity_crop_image', false ) ) {
+			if ( $maxw > 0 && $maxh > 0 && $oldw >= $maxw && $oldh >= $maxh && ( $oldh > $maxh || $oldw > $maxw ) && apply_filters( 'imsanity_crop_image', false ) ) {
 				$neww = $maxw;
 				$newh = $maxh;
 			} else {
