@@ -14,6 +14,7 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Text Domain: imsanity
+Domain Path: /languages
 Version: 2.4.4
 Author URI: https://ewww.io/
 License: GPLv3
@@ -63,9 +64,9 @@ function imsanity_init() {
 /**
  * Import supporting libraries.
  */
-include_once( plugin_dir_path( __FILE__ ) . 'libs/utils.php' );
-include_once( plugin_dir_path( __FILE__ ) . 'settings.php' );
-include_once( plugin_dir_path( __FILE__ ) . 'ajax.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'libs/utils.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'settings.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'ajax.php' );
 
 /**
  * Inspects the request and determines where the upload came from.
@@ -301,6 +302,7 @@ function imsanity_convert_to_jpg( $type, $params ) {
 	return $params;
 }
 
-/* add filters to hook into uploads */
+// Add filter to hook into uploads.
 add_filter( 'wp_handle_upload', 'imsanity_handle_upload' );
+// Run necessary actions on init (loading translations mostly).
 add_action( 'plugins_loaded', 'imsanity_init' );

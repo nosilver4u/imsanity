@@ -15,6 +15,7 @@ if ( ! isset( $wpdb->imsanity_ms ) ) {
 add_action( 'admin_menu', 'imsanity_create_menu' );
 add_action( 'network_admin_menu', 'imsanity_register_network' );
 add_filter( 'plugin_action_links_' . IMSANITY_PLUGIN_FILE_REL, 'imsanity_settings_link' );
+add_filter( 'network_admin_plugin_action_links_' . IMSANITY_PLUGIN_FILE_REL, 'imsanity_settings_link' );
 add_action( 'admin_enqueue_scripts', 'imsanity_queue_script' );
 add_action( 'admin_init', 'imsanity_register_settings' );
 
@@ -28,8 +29,15 @@ $_imsanity_multisite_settings = null;
  * link it to the plugin settings page
  */
 function imsanity_create_menu() {
+	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
 	// Create new menu for site configuration.
-	add_options_page( esc_html__( 'Imsanity Plugin Settings', 'imsanity' ), 'Imsanity', 'administrator', IMSANITY_PLUGIN_FILE_REL, 'imsanity_settings_page' );
+	add_options_page(
+		esc_html__( 'Imsanity Plugin Settings', 'imsanity' ), // Page Title.
+		esc_html__( 'Imsanity', 'imsanity' ),                 // Menu Title.
+		$permissions,                                         // Required permissions.
+		IMSANITY_PLUGIN_FILE_REL,                             // Slug.
+		'imsanity_settings_page'                              // Function to call.
+	);
 }
 
 /**
@@ -41,7 +49,15 @@ function imsanity_register_network() {
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
 	if ( is_multisite() && is_plugin_active_for_network( IMSANITY_PLUGIN_FILE_REL ) ) {
-		add_submenu_page( 'settings.php', esc_html__( 'Imsanity Network Settings', 'imsanity' ), 'Imsanity', 'manage_options', IMSANITY_PLUGIN_FILE_REL, 'imsanity_network_settings' );
+		$permissions = apply_filters( 'imsanity_superadmin_permissions', 'manage_network_options' );
+		add_submenu_page(
+			'settings.php',
+			esc_html__( 'Imsanity Network Settings', 'imsanity' ),
+			esc_html__( 'Imsanity', 'imsanity' ),
+			$permissions,
+			IMSANITY_PLUGIN_FILE_REL,
+			'imsanity_network_settings'
+		);
 	}
 }
 
@@ -55,12 +71,8 @@ function imsanity_settings_link( $links ) {
 	if ( ! is_array( $links ) ) {
 		$links = array();
 	}
-	if ( ! function_exists( 'is_plugin_active_for_network' ) && is_multisite() ) {
-		// Need to include the plugin library for the is_plugin_active function.
-		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-	}
-	if ( is_multisite() && is_plugin_active_for_network( IMSANITY_PLUGIN_FILE_REL ) ) {
-		$settings_link = '<a href="' . admin_url( 'network/settings.php?page=' . IMSANITY_PLUGIN_FILE_REL ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
+	if ( is_multisite() && is_network_admin() ) {
+		$settings_link = '<a href="' . network_admin_url( 'settings.php?page=' . IMSANITY_PLUGIN_FILE_REL ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
 	} else {
 		$settings_link = '<a href="' . admin_url( 'options-general.php?page=' . IMSANITY_PLUGIN_FILE_REL ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
 	}

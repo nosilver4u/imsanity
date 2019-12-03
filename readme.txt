@@ -141,6 +141,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 * added: imsanity_get_max_width_height filter to customize max width/height
 * fixed: settings link on plugins page broken in some cases
 * fixed: crop filter not applied if max width or height is equal to existing dimension
+* fixed: invalid capabilities used for settings page - props @cfoellmann
 
 = 2.4.3 =
 * changed: default size from 2048 to 1920
