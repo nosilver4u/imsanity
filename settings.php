@@ -315,7 +315,7 @@ function imsanity_network_settings() {
 	<tr>
 	<th scope="row"><label for='imsanity_quality' ><?php esc_html_e( 'JPG image quality', 'imsanity' ); ?></th>
 	<td><input type='text' id='imsanity_quality' name='imsanity_quality' class='small-text' value='<?php echo (int) $settings->imsanity_quality; ?>' /> <?php esc_html_e( 'Valid values are 1-100.', 'imsanity' ); ?>
-	<p class='description'><?php esc_html_e( 'WordPress default is 82', 'imsanity' ); ?></p></td>
+	<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p></td>
 	</tr>
 
 	<tr>
@@ -532,6 +532,7 @@ function imsanity_jpg_quality( $quality = null ) {
  *     @type int $1 The image height.
  * }
  * @param string $file Full path to the uploaded image file.
+ * @return int The proper size to use for scaling originals.
  */
 function imsanity_adjust_default_threshold( $size, $imagesize, $file ) {
 	if ( false !== strpos( $file, 'noresize' ) ) {
@@ -715,7 +716,7 @@ function imsanity_settings_page_form() {
 		<tr>
 		<th scope="row"><label for='imsanity_quality' ><?php esc_html_e( 'JPG image quality', 'imsanity' ); ?></th>
 		<td><input type='text' id='imsanity_quality' name='imsanity_quality' class='small-text' value='<?php echo imsanity_jpg_quality(); ?>' /> <?php esc_html_e( 'Valid values are 1-100.', 'imsanity' ); ?>
-		<p class='description'><?php esc_html_e( 'WordPress default is 82', 'imsanity' ); ?></p></td>
+		<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p></td>
 		</tr>
 
 		<tr>
