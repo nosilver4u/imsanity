@@ -18,6 +18,7 @@ add_filter( 'plugin_action_links_' . IMSANITY_PLUGIN_FILE_REL, 'imsanity_setting
 add_filter( 'network_admin_plugin_action_links_' . IMSANITY_PLUGIN_FILE_REL, 'imsanity_settings_link' );
 add_action( 'admin_enqueue_scripts', 'imsanity_queue_script' );
 add_action( 'admin_init', 'imsanity_register_settings' );
+add_filter( 'big_image_size_threshold', 'imsanity_adjust_default_threshold', 10, 3 );
 
 register_activation_hook( IMSANITY_PLUGIN_FILE_REL, 'imsanity_maybe_created_custom_table' );
 
@@ -518,6 +519,34 @@ function imsanity_jpg_quality( $quality = null ) {
 	} else {
 		return IMSANITY_DEFAULT_QUALITY;
 	}
+}
+
+/**
+ * Check default WP threshold and adjust to comply with normal Imsanity behavior.
+ *
+ * @param int    $size The default WP scaling size, or whatever has been filtered by other plugins.
+ * @param array  $imagesize     {
+ *     Indexed array of the image width and height in pixels.
+ *
+ *     @type int $0 The image width.
+ *     @type int $1 The image height.
+ * }
+ * @param string $file Full path to the uploaded image file.
+ */
+function imsanity_adjust_default_threshold( $size, $imagesize, $file ) {
+	if ( false !== strpos( $file, 'noresize' ) ) {
+		return false;
+	}
+	$max_size = max(
+		imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH ),
+		imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT ),
+		imsanity_get_option( 'imsanity_max_width_library', IMSANITY_DEFAULT_MAX_WIDTH ),
+		imsanity_get_option( 'imsanity_max_height_library', IMSANITY_DEFAULT_MAX_HEIGHT ),
+		imsanity_get_option( 'imsanity_max_width_other', IMSANITY_DEFAULT_MAX_WIDTH ),
+		imsanity_get_option( 'imsanity_max_height_other', IMSANITY_DEFAULT_MAX_HEIGHT ),
+		(int) $size
+	);
+	return $max_size;
 }
 
 /**
