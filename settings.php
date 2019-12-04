@@ -48,7 +48,7 @@ function imsanity_register_network() {
 		// Need to include the plugin library for the is_plugin_active function.
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
-	if ( is_multisite() && is_plugin_active_for_network( IMSANITY_PLUGIN_FILE_REL ) ) {
+	if ( is_multisite() ) {
 		$permissions = apply_filters( 'imsanity_superadmin_permissions', 'manage_network_options' );
 		add_submenu_page(
 			'settings.php',
@@ -255,7 +255,7 @@ function imsanity_network_settings() {
 		</p>
 	</div>
 
-	<form method="post" action="settings.php?page=imsanity_network">
+	<form method="post" action="">
 	<input type="hidden" name="update_imsanity_settings" value="1" />
 	<?php wp_nonce_field( 'imsanity_network_options' ); ?>
 	<table class="form-table">
@@ -266,6 +266,7 @@ function imsanity_network_settings() {
 			<option value="0" <?php selected( $settings->imsanity_override_site, '0' ); ?> ><?php esc_html_e( 'Allow each site to configure Imsanity settings', 'imsanity' ); ?></option>
 			<option value="1" <?php selected( $settings->imsanity_override_site, '1' ); ?> ><?php esc_html_e( 'Use global Imsanity settings (below) for all sites', 'imsanity' ); ?></option>
 		</select>
+		<p class="description"><?php esc_html_e( 'If you allow per-site configuration, the settings below will be used as the defaults. Single-site defaults will be set the first time you visit the site admin after activating Imsanity.', 'imsanity' ); ?></p>
 	</td>
 	</tr>
 
@@ -447,6 +448,9 @@ function imsanity_get_option( $key, $ifnull ) {
  * Run upgrade check for new version.
  */
 function imsanity_upgrade() {
+	if ( is_network_admin() ) {
+		return;
+	}
 	if ( -1 === version_compare( get_option( 'imsanity_version' ), IMSANITY_VERSION ) ) {
 		if ( wp_doing_ajax() ) {
 			return;
@@ -460,16 +464,17 @@ function imsanity_upgrade() {
  * Set default options on multi-site.
  */
 function imsanity_set_defaults() {
-	add_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH, '', false );
-	add_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT, '', false );
-	add_option( 'imsanity_max_width_library', IMSANITY_DEFAULT_MAX_WIDTH, '', false );
-	add_option( 'imsanity_max_height_library', IMSANITY_DEFAULT_MAX_HEIGHT, '', false );
-	add_option( 'imsanity_max_width_other', IMSANITY_DEFAULT_MAX_WIDTH, '', false );
-	add_option( 'imsanity_max_height_other', IMSANITY_DEFAULT_MAX_HEIGHT, '', false );
-	add_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG, '', false );
-	add_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG, '', false );
-	add_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY, '', false );
-	add_option( 'imsanity_deep_scan', false, '', false );
+	$settings = imsanity_get_multisite_settings();
+	add_option( 'imsanity_max_width', $settings->imsanity_max_width, '', false );
+	add_option( 'imsanity_max_height', $settings->imsanity_max_height, '', false );
+	add_option( 'imsanity_max_width_library', $settings->imsanity_max_width_library, '', false );
+	add_option( 'imsanity_max_height_library', $settings->imsanity_max_height_library, '', false );
+	add_option( 'imsanity_max_width_other', $settings->imsanity_max_width_other, '', false );
+	add_option( 'imsanity_max_height_other', $settings->imsanity_max_height_other, '', false );
+	add_option( 'imsanity_png_to_jpg', $settings->imsanity_png_to_jpg, '', false );
+	add_option( 'imsanity_bmp_to_jpg', $settings->imsanity_bmp_to_jpg, '', false );
+	add_option( 'imsanity_quality', $settings->imsanity_quality, '', false );
+	add_option( 'imsanity_deep_scan', $settings->imsanity_deep_scan, '', false );
 	if ( ! get_option( 'imsanity_version' ) ) {
 		global $wpdb;
 		$wpdb->query( "UPDATE $wpdb->options SET autoload='no' WHERE option_name LIKE 'imsanity_%'" );
@@ -480,12 +485,9 @@ function imsanity_set_defaults() {
  * Register the configuration settings that the plugin will use
  */
 function imsanity_register_settings() {
-	if ( ! function_exists( 'is_plugin_active_for_network' ) && is_multisite() ) {
-		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-	}
 	imsanity_upgrade();
 	// We only want to update if the form has been submitted.
-	if ( isset( $_POST['update_imsanity_settings'] ) && is_multisite() && is_plugin_active_for_network( IMSANITY_PLUGIN_FILE_REL ) ) {
+	if ( isset( $_POST['update_imsanity_settings'] ) && is_multisite() && is_network_admin() ) {
 		imsanity_network_settings_update();
 	}
 	// Register our settings.
