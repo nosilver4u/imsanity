@@ -444,12 +444,46 @@ function imsanity_get_option( $key, $ifnull ) {
 }
 
 /**
+ * Run upgrade check for new version.
+ */
+function imsanity_upgrade() {
+	if ( -1 === version_compare( get_option( 'imsanity_version' ), IMSANITY_VERSION ) ) {
+		if ( wp_doing_ajax() ) {
+			return;
+		}
+		imsanity_set_defaults();
+		update_option( 'imsanity_version', IMSANITY_VERSION );
+	}
+}
+
+/**
+ * Set default options on multi-site.
+ */
+function imsanity_set_defaults() {
+	add_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH, '', false );
+	add_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT, '', false );
+	add_option( 'imsanity_max_width_library', IMSANITY_DEFAULT_MAX_WIDTH, '', false );
+	add_option( 'imsanity_max_height_library', IMSANITY_DEFAULT_MAX_HEIGHT, '', false );
+	add_option( 'imsanity_max_width_other', IMSANITY_DEFAULT_MAX_WIDTH, '', false );
+	add_option( 'imsanity_max_height_other', IMSANITY_DEFAULT_MAX_HEIGHT, '', false );
+	add_option( 'imsanity_png_to_jpg', IMSANITY_DEFAULT_PNG_TO_JPG, '', false );
+	add_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG, '', false );
+	add_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY, '', false );
+	add_option( 'imsanity_deep_scan', false, '', false );
+	if ( ! get_option( 'imsanity_version' ) ) {
+		global $wpdb;
+		$wpdb->query( "UPDATE $wpdb->options SET autoload='no' WHERE option_name LIKE 'imsanity_%'" );
+	}
+}
+
+/**
  * Register the configuration settings that the plugin will use
  */
 function imsanity_register_settings() {
 	if ( ! function_exists( 'is_plugin_active_for_network' ) && is_multisite() ) {
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
+	imsanity_upgrade();
 	// We only want to update if the form has been submitted.
 	if ( isset( $_POST['update_imsanity_settings'] ) && is_multisite() && is_plugin_active_for_network( IMSANITY_PLUGIN_FILE_REL ) ) {
 		imsanity_network_settings_update();
