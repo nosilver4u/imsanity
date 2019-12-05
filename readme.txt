@@ -2,10 +2,10 @@
 Contributors: nosilver4u
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MKMQKCBFFG3WW
 Tags: image, scale, resize, space saver, quality
-Requires at least: 4.9
+Requires at least: 5.0
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 2.4.4
+Stable tag: 2.5.0
 License: GPLv3
 
 Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually scaling? Imsanity to the rescue!
@@ -135,7 +135,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
-= 2.4.4 =
+= 2.5.0 =
 * added: imsanity_allowed_mimes filter to override the default list of image formats allowed
 * added: imsanity_orientation filter to modify auto-rotation behavior, return 1 to bypass
 * added: imsanity_get_max_width_height filter to customize max width/height

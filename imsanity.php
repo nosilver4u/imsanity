@@ -15,7 +15,7 @@ Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Text Domain: imsanity
 Domain Path: /languages
-Version: 2.4.4
+Version: 2.5.0
 Author URI: https://ewww.io/
 License: GPLv3
 */
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.4.4' );
+define( 'IMSANITY_VERSION', '2.5.0' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
