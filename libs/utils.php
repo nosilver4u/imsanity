@@ -120,6 +120,141 @@ function imsanity_fatal( $message, $title = '', $die = false ) {
 }
 
 /**
+ * Resizes the image with the given id according to the configured max width and height settings.
+ *
+ * @param int $id The attachment ID of the image to process.
+ * @return array The success status (bool) and a message to display.
+ */
+function imsanity_resize_from_id( $id = 0 ) {
+
+	$id = (int) $id;
+
+	if ( ! $id ) {
+		return;
+	}
+
+	$meta = wp_get_attachment_metadata( $id );
+
+	if ( $meta && is_array( $meta ) ) {
+		$uploads = wp_upload_dir();
+		$oldpath = imsanity_attachment_path( $meta['file'], $id, '', false );
+		if ( empty( $oldpath ) || ! is_writable( $oldpath ) ) {
+			/* translators: %s: File-name of the image */
+			$msg = sprintf( esc_html__( '%s is not writable', 'imsanity' ), $meta['file'] );
+			return array(
+				'success' => false,
+				'message' => $msg,
+			);
+		}
+
+		$maxw = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
+		$maxh = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
+
+		// method one - slow but accurate, get file size from file itself.
+		list( $oldw, $oldh ) = getimagesize( $oldpath );
+		// method two - get file size from meta, fast but resize will fail if meta is out of sync.
+		if ( ! $oldw || ! $oldh ) {
+			$oldw = $meta['width'];
+			$oldh = $meta['height'];
+		}
+
+		if ( ( $oldw > $maxw && $maxw > 0 ) || ( $oldh > $maxh && $maxh > 0 ) ) {
+			$quality = imsanity_get_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY );
+
+			if ( $maxw > 0 && $maxh > 0 && $oldw >= $maxw && $oldh >= $maxh && ( $oldh > $maxh || $oldw > $maxw ) && apply_filters( 'imsanity_crop_image', false ) ) {
+				$neww = $maxw;
+				$newh = $maxh;
+			} else {
+				list( $neww, $newh ) = wp_constrain_dimensions( $oldw, $oldh, $maxw, $maxh );
+			}
+
+			$resizeresult = imsanity_image_resize( $oldpath, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
+
+			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
+				$newpath = $resizeresult;
+
+				if ( $newpath !== $oldpath && is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
+					// we saved some file space. remove original and replace with resized image.
+					unlink( $oldpath );
+					rename( $newpath, $oldpath );
+					$meta['width']  = $neww;
+					$meta['height'] = $newh;
+
+					wp_update_attachment_metadata( $id, $meta );
+
+					$results = array(
+						'success' => true,
+						'id'      => $id,
+						/* translators: %s: File-name of the image */
+						'message' => sprintf( esc_html__( 'OK: %s', 'imsanity' ), $oldpath ),
+					);
+				} elseif ( $newpath !== $oldpath ) {
+					// the resized image is actually bigger in filesize (most likely due to jpg quality).
+					// keep the old one and just get rid of the resized image.
+					if ( is_file( $newpath ) ) {
+						unlink( $newpath );
+					}
+					$results = array(
+						'success' => false,
+						'id'      => $id,
+						/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
+						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, esc_html__( 'Resized image was larger than the original', 'imsanity' ) ),
+					);
+				} else {
+					$results = array(
+						'success' => false,
+						'id'      => $id,
+						/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
+						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, esc_html__( 'Unknown error, resizing function returned the same filename', 'imsanity' ) ),
+					);
+				}
+			} elseif ( false === $resizeresult ) {
+				$results = array(
+					'success' => false,
+					'id'      => $id,
+					/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
+					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, esc_html__( 'wp_get_image_editor missing', 'imsanity' ) ),
+				);
+			} else {
+				$results = array(
+					'success' => false,
+					'id'      => $id,
+					/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
+					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, htmlentities( $resizeresult->get_error_message() ) ),
+				);
+			}
+		} else {
+			$results = array(
+				'success' => true,
+				'id'      => $id,
+				/* translators: %s: File-name of the image */
+				'message' => sprintf( esc_html__( 'SKIPPED: %s (Resize not required)', 'imsanity' ), $oldpath ) . " -- $oldw x $oldh",
+			);
+			if ( empty( $meta['width'] ) || empty( $meta['height'] ) ) {
+				if ( empty( $meta['width'] ) || $meta['width'] > $oldw ) {
+					$meta['width'] = $oldw;
+				}
+				if ( empty( $meta['height'] ) || $meta['height'] > $oldh ) {
+					$meta['height'] = $oldh;
+				}
+				wp_update_attachment_metadata( $id, $meta );
+			}
+		}
+	} else {
+		$results = array(
+			'success' => false,
+			'id'      => $id,
+			/* translators: %s: ID number of the image */
+			'message' => sprintf( esc_html__( 'ERROR: Attachment with ID of %d not found', 'imsanity' ), intval( $id ) ),
+		);
+	}
+
+	// If there is a quota we need to reset the directory size cache so it will re-calculate.
+	delete_transient( 'dirsize_cache' );
+
+	return $results;
+}
+/**
  * Replacement for deprecated image_resize function
  *
  * @param string $file Image file path.

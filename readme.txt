@@ -136,6 +136,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 == Changelog ==
 
 = 2.6.0 =
+* added: wp-cli command 'wp help imsanity resize'
 * fixed: adding an image to a post in pre-draft status uses wrong settings/dimensions
 
 = 2.5.0 =

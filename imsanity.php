@@ -67,6 +67,9 @@ function imsanity_init() {
 require_once( plugin_dir_path( __FILE__ ) . 'libs/utils.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'settings.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'ajax.php' );
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once( plugin_dir_path( __FILE__ ) . 'class-imsanity-cli.php' );
+}
 
 /**
  * Use the EWWW IO debugging functions.

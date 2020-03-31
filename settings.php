@@ -638,13 +638,14 @@ function imsanity_settings_page() {
 
 	<div id="imsanity_header">
 	<p><?php esc_html_e( 'If you have existing images that were uploaded prior to installing Imsanity, you may resize them all in bulk to recover disk space. To begin, click the "Search Images" button to search all existing attachments for images that are larger than the configured limit.', 'imsanity' ); ?></p>
+	<?php /* translators: %s: the WP-CLI command to run */ ?>
+	<p><?php printf( esc_html__( 'You may also use WP-CLI to resize your images: %s', 'imsanity' ), '<code>wp help imsanity resize</code>' ); ?></p>
 	<?php /* translators: %d: the number of images */ ?>
 	<p><?php printf( esc_html__( 'NOTE: To give you greater control over the resizing process, a maximum of %d images will be returned at one time. Bitmap images cannot be bulk resized and will not appear in the search results.', 'imsanity' ), IMSANITY_AJAX_MAX_RECORDS ); ?></p>
 	</div>
 
 	<div style="border: solid 1px #ff6666; background-color: #ffbbbb; padding: 0 10px;">
 		<h4><?php esc_html_e( 'WARNING: Bulk Resize will alter your original images and cannot be undone!', 'imsanity' ); ?></h4>
-
 		<p><?php esc_html_e( 'It is HIGHLY recommended that you backup your wp-content/uploads folder before proceeding. You will have a chance to preview and select the images to convert.', 'imsanity' ); ?><br>
 		<?php esc_html_e( 'It is also recommended that you initially select only 1 or 2 images and verify that everything is working properly before processing your entire library.', 'imsanity' ); ?></p>
 	</div>
