@@ -1,3 +1,7 @@
+= 2.6.0 =
+* added: wp-cli command 'wp help imsanity resize'
+* fixed: adding an image to a post in pre-draft status uses wrong settings/dimensions
+
 = 2.5.0 =
 * added: imsanity_allowed_mimes filter to override the default list of image formats allowed
 * added: imsanity_orientation filter to modify auto-rotation behavior, return 1 to bypass

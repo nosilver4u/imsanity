@@ -1,5 +1,5 @@
 # Imsanity
-**Minimum WordPress:** 4.5
+**Minimum WordPress:** 5.0
 **Minimum PHP:** 5.6
 
 [![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
