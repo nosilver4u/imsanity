@@ -320,8 +320,8 @@ function imsanity_convert_to_jpg( $type, $params ) {
 
 	// We need to change the extension from the original to .jpg so we have to ensure it will be a unique filename.
 	$uploads     = wp_upload_dir();
-	$oldfilename = basename( $params['file'] );
-	$newfilename = basename( str_ireplace( '.' . $type, '.jpg', $oldfilename ) );
+	$oldfilename = wp_basename( $params['file'] );
+	$newfilename = wp_basename( str_ireplace( '.' . $type, '.jpg', $oldfilename ) );
 	$newfilename = wp_unique_filename( $uploads['path'], $newfilename );
 
 	$quality = imsanity_get_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY );
