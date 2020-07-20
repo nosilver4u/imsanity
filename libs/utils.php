@@ -137,7 +137,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 
 	if ( $meta && is_array( $meta ) ) {
 		$uploads = wp_upload_dir();
-		$oldpath = imsanity_attachment_path( $meta['file'], $id, '', false );
+		$oldpath = imsanity_attachment_path( $meta, $id, '', false );
 		if ( empty( $oldpath ) || ! is_writable( $oldpath ) ) {
 			/* translators: %s: File-name of the image */
 			$msg = sprintf( esc_html__( '%s is not writable', 'imsanity' ), $meta['file'] );
