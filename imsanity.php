@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.6.0.3.7' );
+define( 'IMSANITY_VERSION', '2.6.0.3.9' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
@@ -178,6 +178,10 @@ function imsanity_handle_upload( $params ) {
 
 	// If "noresize" is included in the filename then we will bypass imsanity scaling.
 	if ( strpos( $params['file'], 'noresize' ) !== false ) {
+		return $params;
+	}
+
+	if ( apply_filters( 'imsanity_skip_image', false, $params['file'] ) ) {
 		return $params;
 	}
 

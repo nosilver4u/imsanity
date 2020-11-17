@@ -7,6 +7,7 @@
 
 add_action( 'wp_ajax_imsanity_get_images', 'imsanity_get_images' );
 add_action( 'wp_ajax_imsanity_resize_image', 'imsanity_ajax_resize' );
+add_action( 'wp_ajax_imsanity_remove_original', 'imsanity_ajax_remove_original' );
 add_action( 'wp_ajax_imsanity_bulk_complete', 'imsanity_ajax_finish' );
 
 /**
@@ -143,6 +144,33 @@ function imsanity_ajax_resize() {
 	}
 
 	die( json_encode( $results ) );
+}
+
+/**
+ * Resizes the image with the given id according to the configured max width and height settings
+ * renders a json response indicating success/failure and dies
+ */
+function imsanity_ajax_remove_original() {
+	imsanity_verify_permission();
+
+	$id = (int) $_POST['id'];
+	if ( ! $id ) {
+		die(
+			json_encode(
+				array(
+					'success' => false,
+					'message' => esc_html__( 'Missing ID Parameter', 'imsanity' ),
+				)
+			)
+		);
+	}
+	$remove_original = imsanity_remove_original_image( $id );
+	if ( $remove_original && is_array( $remove_original ) ) {
+		wp_update_attachment_metadata( $id, $remove_original );
+		die( json_encode( array( 'success' => true ) ) );
+	}
+
+	die( json_encode( array( 'success' => false ) ) );
 }
 
 /**

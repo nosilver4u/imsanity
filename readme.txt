@@ -139,6 +139,8 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 * changed: bulk resizer will resize all images with no limits, use list mode for selective resizing
 * added: see current dimensions and resize individual images in Media Library list mode
 * added: imsanity_disable_convert filter to bypass BMP/PNG to JPG conversion options conditionally
+* added: imsanity_skip_image filter to bypass resizing programmatically
+* added: ability to remove pre-scaled original image backup (in bulk or selectively)
 * changed: PNG images will not be converted if transparency is found
 * fixed: BMP files not converted when server uses image/x-ms-bmp as mime identifier
 * removed: Deep Scan option is the default behavior now, no need for configuration

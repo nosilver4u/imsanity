@@ -191,6 +191,17 @@ function imsanity_resize_from_id( $id = 0 ) {
 	$meta = wp_get_attachment_metadata( $id );
 
 	if ( $meta && is_array( $meta ) ) {
+		$update_meta = false;
+		// If "noresize" is included in the filename then we will bypass imsanity scaling.
+		if ( ! empty( $meta['file'] ) && false !== strpos( $meta['file'], 'noresize' ) ) {
+			/* translators: %s: File-name of the image */
+			$msg = sprintf( esc_html__( 'SKIPPED: %s (noresize)', 'imsanity' ), $meta['file'] );
+			return array(
+				'success' => false,
+				'message' => $msg,
+			);
+		}
+
 		// Let folks filter the allowed mime-types for resizing.
 		$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $meta['file'] );
 		if ( is_string( $allowed_types ) ) {
@@ -213,6 +224,15 @@ function imsanity_resize_from_id( $id = 0 ) {
 		if ( empty( $oldpath ) || ! is_writable( $oldpath ) ) {
 			/* translators: %s: File-name of the image */
 			$msg = sprintf( esc_html__( '%s is not writable', 'imsanity' ), $meta['file'] );
+			return array(
+				'success' => false,
+				'message' => $msg,
+			);
+		}
+
+		if ( apply_filters( 'imsanity_skip_image', false, $oldpath ) ) {
+			/* translators: %s: File-name of the image */
+			$msg = sprintf( esc_html__( 'SKIPPED: %s (by user exclusion)', 'imsanity' ), $meta['file'] );
 			return array(
 				'success' => false,
 				'message' => $msg,
@@ -252,7 +272,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 					$meta['width']  = $neww;
 					$meta['height'] = $newh;
 
-					wp_update_attachment_metadata( $id, $meta );
+					$update_meta = true;
 
 					$results = array(
 						'success' => true,
@@ -309,8 +329,16 @@ function imsanity_resize_from_id( $id = 0 ) {
 				if ( empty( $meta['height'] ) || $meta['height'] > $oldh ) {
 					$meta['height'] = $oldh;
 				}
-				wp_update_attachment_metadata( $id, $meta );
+				$update_meta = true;
 			}
+		}
+		$remove_original = imsanity_remove_original_image( $id, $meta );
+		if ( $remove_original && is_array( $remove_original ) ) {
+			$meta        = $remove_original;
+			$update_meta = true;
+		}
+		if ( ! empty( $update_meta ) ) {
+			wp_update_attachment_metadata( $id, $meta );
 		}
 	} else {
 		$results = array(
@@ -328,7 +356,42 @@ function imsanity_resize_from_id( $id = 0 ) {
 }
 
 /**
- * Replacement for deprecated image_resize function
+ * Remove the backed-up original_image stored by WP 5.3+.
+ *
+ * @param int   $id The attachment ID number.
+ * @param array $meta The attachment metadata. Optional, default to null.
+ * @return bool True on success, false on failure.
+ */
+function imsanity_remove_original_image( $id, $meta = null ) {
+	$id = (int) $id;
+	if ( empty( $id ) ) {
+		return false;
+	}
+	if ( is_null( $meta ) ) {
+		$meta = wp_get_attachment_metadata( $id );
+	}
+
+	if (
+		$meta && is_array( $meta ) &&
+		imsanity_get_option( 'imsanity_delete_originals', false ) &&
+		! empty( $meta['original_image'] ) && function_exists( 'wp_get_original_image_path' )
+	) {
+		$original_image = wp_get_original_image_path( $id );
+		if ( empty( $original_image ) || ! is_file( $original_image ) ) {
+			$original_image = wp_get_original_image_path( $id, true );
+		}
+		if ( ! empty( $original_image ) && is_file( $original_image ) && is_writable( $original_image ) ) {
+			if ( unlink( $original_image ) ) {
+				unset( $meta['original_image'] );
+				return $meta;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Resize an image using the WP_Image_Editor.
  *
  * @param string $file Image file path.
  * @param int    $max_w Maximum width to resize to.

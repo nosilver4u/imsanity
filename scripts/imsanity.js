@@ -29,6 +29,35 @@ jQuery(document).on('click', '.imsanity-manual-resize', function() {
 	return false;
 });
 
+// Handle an original image removal request from the media library.
+jQuery(document).on('click', '.imsanity-manual-remove-original', function() {
+	var post_id = jQuery(this).data('id');
+	var imsanity_nonce = jQuery(this).data('nonce');
+	jQuery('#imsanity-media-status-' + post_id ).html( imsanity_vars.resizing );
+	jQuery.post(
+		ajaxurl,
+		{_wpnonce: imsanity_nonce, action: 'imsanity_remove_original', id: post_id},
+		function(response) {
+			var target = jQuery('#imsanity-media-status-' + post_id );
+			try {
+				var result = JSON.parse(response);
+				if (! result['success']) {
+					target.html(imsanity_vars.removal_failed);
+				} else {
+					target.html(imsanity_vars.removal_succeeded);
+				}
+			} catch(e) {
+				target.html(imsanity_vars.invalid_response);
+				if (console) {
+					console.warn(post_id + ': '+ e.message);
+					console.warn('Invalid JSON Response: ' + response);
+				}
+			}
+		}
+	);
+	return false;
+});
+
 jQuery(document).on('submit', '#imsanity-bulk-stop', function() {
 	jQuery(this).hide();
 	imsanity_vars.stopped = true;
