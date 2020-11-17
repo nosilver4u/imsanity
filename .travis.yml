@@ -1,4 +1,5 @@
-sudo: false
+os: linux
+dist: xenial
 
 language: php
 
@@ -12,7 +13,7 @@ branches:
     - master
 
 php:
-  - 7.3
+  - 7.4
 
 env:
   - WP_VERSION=latest WP_MULTISITE=0
