@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.6.0' );
+define( 'IMSANITY_VERSION', '2.6.0.3.7' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
@@ -67,12 +67,13 @@ function imsanity_init() {
 require_once( plugin_dir_path( __FILE__ ) . 'libs/utils.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'settings.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'ajax.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'media.php' );
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( plugin_dir_path( __FILE__ ) . 'class-imsanity-cli.php' );
 }
 
 /**
- * Use the EWWW IO debugging functions.
+ * Use the EWWW IO debugging functions (if available).
  *
  * @param string $message A message to send to the debugger.
  */
@@ -181,7 +182,7 @@ function imsanity_handle_upload( $params ) {
 	}
 
 	// If preferences specify so then we can convert an original bmp or png file into jpg.
-	if ( 'image/bmp' === $params['type'] && imsanity_get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ) {
+	if ( ( 'image/bmp' === $params['type'] || 'image/x-ms-bmp' === $params['type'] ) && imsanity_get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ) {
 		$params = imsanity_convert_to_jpg( 'bmp', $params );
 	}
 
@@ -298,12 +299,20 @@ function imsanity_handle_upload( $params ) {
  */
 function imsanity_convert_to_jpg( $type, $params ) {
 
+	if ( apply_filters( 'imsanity_disable_convert', false, $type, $params ) ) {
+		return $params;
+	}
+
 	$img = null;
 
 	if ( 'bmp' === $type ) {
 		include_once( 'libs/imagecreatefrombmp.php' );
 		$img = imagecreatefrombmp( $params['file'] );
 	} elseif ( 'png' === $type ) {
+		// Prevent converting PNG images with alpha/transparency, unless overridden by the user.
+		if ( apply_filters( 'imsanity_skip_alpha', imsanity_has_alpha( $params['file'] ), $params['file'] ) ) {
+			return $params;
+		}
 		if ( ! function_exists( 'imagecreatefrompng' ) ) {
 			return wp_handle_upload_error( $params['file'], esc_html__( 'Imsanity requires the GD library to convert PNG images to JPG', 'imsanity' ) );
 		}
@@ -350,3 +359,8 @@ function imsanity_convert_to_jpg( $type, $params ) {
 add_filter( 'wp_handle_upload', 'imsanity_handle_upload' );
 // Run necessary actions on init (loading translations mostly).
 add_action( 'plugins_loaded', 'imsanity_init' );
+
+// Adds a column to the media library list view to display optimization results.
+add_filter( 'manage_media_columns', 'imsanity_media_columns' );
+// Outputs the actual column information for each attachment.
+add_action( 'manage_media_custom_column', 'imsanity_custom_column', 10, 2 );

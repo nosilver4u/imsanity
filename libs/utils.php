@@ -103,6 +103,61 @@ function imsanity_get_orientation( $file, $type ) {
 }
 
 /**
+ * Check an image to see if it has transparency.
+ *
+ * @param string $filename The name of the image file.
+ * @return bool True if transparency is found.
+ */
+function imsanity_has_alpha( $filename ) {
+	if ( ! is_file( $filename ) ) {
+		return false;
+	}
+	if ( false !== strpos( $filename, '../' ) ) {
+		return false;
+	}
+	$file_contents = file_get_contents( $filename );
+	// Determine what color type is stored in the file.
+	$color_type = ord( substr( $file_contents, 25, 1 ) );
+	// If we do not have GD and the PNG color type is RGB alpha or Grayscale alpha.
+	if ( ! imsanity_gd_support() && ( 4 === $color_type || 6 === $color_type ) ) {
+		return true;
+	} elseif ( imsanity_gd_support() ) {
+		$image = imagecreatefrompng( $filename );
+		if ( imagecolortransparent( $image ) >= 0 ) {
+			return true;
+		}
+		list( $width, $height ) = getimagesize( $filename );
+		for ( $y = 0; $y < $height; $y++ ) {
+			for ( $x = 0; $x < $width; $x++ ) {
+				$color = imagecolorat( $image, $x, $y );
+				$rgb   = imagecolorsforindex( $image, $color );
+				if ( $rgb['alpha'] > 0 ) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Check for GD support of both PNG and JPG.
+ *
+ * @return bool True if full GD support is detected.
+ */
+function imsanity_gd_support() {
+	if ( function_exists( 'gd_info' ) ) {
+		$gd_support = gd_info();
+		if ( is_iterable( $gd_support ) ) {
+			if ( ( ! empty( $gd_support['JPEG Support'] ) || ! empty( $gd_support['JPG Support'] ) ) && ! empty( $gd_support['PNG Support'] ) ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
  * Output a fatal error and optionally die.
  *
  * @param string $message The message to output.
@@ -136,6 +191,23 @@ function imsanity_resize_from_id( $id = 0 ) {
 	$meta = wp_get_attachment_metadata( $id );
 
 	if ( $meta && is_array( $meta ) ) {
+		// Let folks filter the allowed mime-types for resizing.
+		$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $meta['file'] );
+		if ( is_string( $allowed_types ) ) {
+			$allowed_types = array( $allowed_types );
+		} elseif ( ! is_array( $allowed_types ) ) {
+			$allowed_types = array();
+		}
+		$ftype = imsanity_quick_mimetype( $meta['file'] );
+		if ( ! in_array( $ftype, $allowed_types, true ) ) {
+			/* translators: %s: File type of the image */
+			$msg = sprintf( esc_html__( '%1$s does not have an allowed file type (%2$s)', 'imsanity' ), $meta['file'], $ftype );
+			return array(
+				'success' => false,
+				'message' => $msg,
+			);
+		}
+
 		$uploads = wp_upload_dir();
 		$oldpath = imsanity_attachment_path( $meta, $id, '', false );
 		if ( empty( $oldpath ) || ! is_writable( $oldpath ) ) {
@@ -185,8 +257,8 @@ function imsanity_resize_from_id( $id = 0 ) {
 					$results = array(
 						'success' => true,
 						'id'      => $id,
-						/* translators: %s: File-name of the image */
-						'message' => sprintf( esc_html__( 'OK: %s', 'imsanity' ), $oldpath ),
+						/* translators: 1: File-name of the image */
+						'message' => sprintf( esc_html__( 'OK: %1$s resized to %2$s x %3$s', 'imsanity' ), $meta['file'], $neww . 'w', $newh . 'h' ),
 					);
 				} elseif ( $newpath !== $oldpath ) {
 					// the resized image is actually bigger in filesize (most likely due to jpg quality).
@@ -198,14 +270,14 @@ function imsanity_resize_from_id( $id = 0 ) {
 						'success' => false,
 						'id'      => $id,
 						/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
-						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, esc_html__( 'Resized image was larger than the original', 'imsanity' ) ),
+						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], esc_html__( 'File size of resized image was larger than the original', 'imsanity' ) ),
 					);
 				} else {
 					$results = array(
 						'success' => false,
 						'id'      => $id,
 						/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
-						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, esc_html__( 'Unknown error, resizing function returned the same filename', 'imsanity' ) ),
+						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], esc_html__( 'Unknown error, resizing function returned the same filename', 'imsanity' ) ),
 					);
 				}
 			} elseif ( false === $resizeresult ) {
@@ -213,14 +285,14 @@ function imsanity_resize_from_id( $id = 0 ) {
 					'success' => false,
 					'id'      => $id,
 					/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
-					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, esc_html__( 'wp_get_image_editor missing', 'imsanity' ) ),
+					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], esc_html__( 'wp_get_image_editor missing', 'imsanity' ) ),
 				);
 			} else {
 				$results = array(
 					'success' => false,
 					'id'      => $id,
 					/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
-					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $oldpath, htmlentities( $resizeresult->get_error_message() ) ),
+					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], htmlentities( $resizeresult->get_error_message() ) ),
 				);
 			}
 		} else {
@@ -228,7 +300,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 				'success' => true,
 				'id'      => $id,
 				/* translators: %s: File-name of the image */
-				'message' => sprintf( esc_html__( 'SKIPPED: %s (Resize not required)', 'imsanity' ), $oldpath ) . " -- $oldw x $oldh",
+				'message' => sprintf( esc_html__( 'SKIPPED: %s (Resize not required)', 'imsanity' ), $meta['file'] ) . " -- $oldw x $oldh",
 			);
 			if ( empty( $meta['width'] ) || empty( $meta['height'] ) ) {
 				if ( empty( $meta['width'] ) || $meta['width'] > $oldw ) {
@@ -254,6 +326,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 
 	return $results;
 }
+
 /**
  * Replacement for deprecated image_resize function
  *

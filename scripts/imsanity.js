@@ -4,55 +4,78 @@
 
 jQuery(document).ready(function($) {$(".fade").fadeTo(5000,1).fadeOut(3000);});
 
+// Handle a manual resize from the media library.
+jQuery(document).on('click', '.imsanity-manual-resize', function() {
+	var post_id = jQuery(this).data('id');
+	var imsanity_nonce = jQuery(this).data('nonce');
+	jQuery('#imsanity-media-status-' + post_id ).html( imsanity_vars.resizing );
+	jQuery.post(
+		ajaxurl,
+		{_wpnonce: imsanity_nonce, action: 'imsanity_resize_image', id: post_id},
+		function(response) {
+			var target = jQuery('#imsanity-media-status-' + post_id );
+			try {
+				var result = JSON.parse(response);
+				target.html(result['message']);
+			} catch(e) {
+				target.html(imsanity_vars.invalid_response);
+				if (console) {
+					console.warn(post_id + ': '+ e.message);
+					console.warn('Invalid JSON Response: ' + response);
+				}
+			}
+		}
+	);
+	return false;
+});
+
+jQuery(document).on('submit', '#imsanity-bulk-stop', function() {
+	jQuery(this).hide();
+	imsanity_vars.stopped = true;
+	imsanity_vars.attachments = [];
+	jQuery('#imsanity_loading').html(imsanity_vars.operation_stopped);
+	jQuery('#imsanity_loading').show();
+	return false;
+});
+
 /**
  * Begin the process of re-sizing all of the checked images
  */
-function imsanity_resize_images()
-{
-	var images = [];
-	jQuery('.imsanity_image_cb:checked').each(function(i) {
-       images.push(this.value);
-    });
-
-	var target = jQuery('#resize_results');
-	target.html('');
-	//jQuery(document).scrollTop(target.offset().top);
-
+function imsanity_resize_images() {
 	// start the recursion
-	imsanity_resize_next(images,0);
+	imsanity_resize_next(0);
 }
 
 /**
  * recursive function for resizing images
  */
-function imsanity_resize_next(images,next_index)
-{
-	if (next_index >= images.length) return imsanity_resize_complete();
+function imsanity_resize_next(next_index) {
+	if (next_index >= imsanity_vars.attachments.length) return imsanity_resize_complete();
+	var total_images = imsanity_vars.attachments.length;
+	var target = jQuery('#resize_results');
+	target.show();
 
 	jQuery.post(
 		ajaxurl, // (defined by wordpress - points to admin-ajax.php)
-		{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_resize_image', id: images[next_index]},
-		function(response)
-		{
+		{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_resize_image', id: imsanity_vars.attachments[next_index], resumable: 1},
+		function (response) {
 			var result;
-			var target = jQuery('#resize_results');
-			target.show();
+			jQuery('#bulk-resize-beginning').hide();
 
 			try {
 				result = JSON.parse(response);
-				target.append('<div>' + (next_index+1) + '/' + images.length + ' &gt;&gt; ' + result['message'] +'</div>');
-			}
-			catch(e) {
+				target.append('<div>' + (next_index+1) + '/' + total_images + ' &gt;&gt; ' + result['message'] +'</div>');
+			} catch(e) {
 				target.append('<div>' + imsanity_vars.invalid_response + '</div>');
 				if (console) {
-					console.warn(images[next_index] + ': '+ e.message);
+					console.warn(imsanity_vars.attachments[next_index] + ': '+ e.message);
 					console.warn('Invalid JSON Response: ' + response);
 				}
-		    }
+			}
 
-			target.animate({scrollTop: target.prop('scrollHeight')}, 200);
+			target.animate({scrollTop: target.prop('scrollHeight')}, 400);
 			// recurse
-			imsanity_resize_next(images,next_index+1);
+			imsanity_resize_next(next_index+1);
 		}
 	);
 }
@@ -60,64 +83,53 @@ function imsanity_resize_next(images,next_index)
 /**
  * fired when all images have been resized
  */
-function imsanity_resize_complete()
-{
+function imsanity_resize_complete() {
 	var target = jQuery('#resize_results');
-	target.append('<div><strong>' + imsanity_vars.resizing_complete + '</strong></div>');
+	if (! imsanity_vars.stopped) {
+		jQuery('#imsanity-bulk-stop').hide();
+		target.append('<div><strong>' + imsanity_vars.resizing_complete + '</strong></div>');
+		jQuery.post(
+			ajaxurl, // (global defined by wordpress - points to admin-ajax.php)
+			{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_bulk_complete'}
+		);
+	}
 	target.animate({scrollTop: target.prop('scrollHeight')});
 }
 
 /**
- * ajax post to return all images that are candidates for resizing
+ * ajax post to return all images from the library
  * @param string the id of the html element into which results will be appended
  */
-function imsanity_load_images(container_id)
-{
-	var container = jQuery('#'+container_id);
-
-	var target = jQuery('#imsanity_target');
-	target.show();
-	jQuery('.imsanity-selection').remove();
+function imsanity_load_images() {
+	jQuery('#imsanity-examine-button').hide();
+	jQuery('.imsanity-bulk-text').hide();
+	jQuery('#imsanity-bulk-reset').hide();
 	jQuery('#imsanity_loading').show();
 
-	target.animate({height: [250,'swing']},500, function()
-	{
-		jQuery(document).scrollTop(container.offset().top);
+	jQuery.post(
+		ajaxurl, // (global defined by wordpress - points to admin-ajax.php)
+		{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_get_images', resume_id: imsanity_vars.resume_id},
+		function(response) {
+			var is_json = true;
+			try {
+				var images = jQuery.parseJSON(response);
+			} catch ( err ) {
+				is_json = false;
+			}
+			if ( ! is_json ) {
+				console.log( response );
+				return false;
+			}
 
-		jQuery.post(
-				ajaxurl, // (global defined by wordpress - points to admin-ajax.php)
-				{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_get_images'},
-				function(response) {
-					var is_json = true;
-					try {
-						var images = jQuery.parseJSON(response);
-					} catch ( err ) {
-						is_json = false;
-					}
-					if ( ! is_json ) {
-						console.log( response );
-						return false;
-					}
-
-					jQuery('#imsanity_loading').hide();
-					if (images.length > 0)
-					{
-						target.append('<div class="imsanity-selection"><input id="imsanity_check_all" type="checkbox" checked="checked" onclick="jQuery(\'.imsanity_image_cb\').attr(\'checked\', this.checked);" /> Select All</div>');
-						for (var i = 0; i < images.length; i++)
-						{
-							target.append('<div class="imsanity-selection"><input class="imsanity_image_cb" name="imsanity_images" value="' + images[i].id + '" type="checkbox" checked="checked" />' + imsanity_vars.image + ' ' + images[i].id + ': ' + images[i].file +' ('+images[i].width+' x '+images[i].height+')</div>');
-						}
-						if ( ! jQuery( '#resize-submit' ).length ) {
-							container.append('<p id="resize-submit" class="submit"><button class="button-primary" onclick="imsanity_resize_images();">' + imsanity_vars.resize_selected + '</button></p>');
-							container.append('<div id="resize_results" style="display: none; border: solid 2px #666666; padding: 10px; height: 250px; overflow: auto;" />');
-						}
-					}
-					else
-					{
-						target.html('<div>' + imsanity_vars.none_found + '</div>');
-
-					}
-				}
-			);
-	});
+			jQuery('#imsanity_loading').hide();
+			if (images.length > 0) {
+				imsanity_vars.attachments = images;
+				imsanity_vars.stopped = false;
+				jQuery('#imsanity-bulk-stop').show();
+				imsanity_resize_images();
+			} else {
+				jQuery('#imsanity_loading').html('<div>' + imsanity_vars.none_found + '</div>');
+			}
+		}
+	);
 }

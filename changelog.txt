@@ -1,3 +1,6 @@
+= 2.6.1 =
+* fixed: wrong parameter passed to imsanity_attachment_path()
+
 = 2.6.0 =
 * added: wp-cli command 'wp help imsanity resize'
 * fixed: adding an image to a post in pre-draft status uses wrong settings/dimensions

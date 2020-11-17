@@ -7,6 +7,7 @@
 
 add_action( 'wp_ajax_imsanity_get_images', 'imsanity_get_images' );
 add_action( 'wp_ajax_imsanity_resize_image', 'imsanity_ajax_resize' );
+add_action( 'wp_ajax_imsanity_bulk_complete', 'imsanity_ajax_finish' );
 
 /**
  * Verifies that the current user has administrator permission and, if not,
@@ -23,7 +24,7 @@ function imsanity_verify_permission() {
 			)
 		);
 	}
-	if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'imsanity-bulk' ) ) {
+	if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'imsanity-bulk' ) && ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'imsanity-manual-resize' ) ) {
 		die(
 			json_encode(
 				array(
@@ -43,7 +44,14 @@ function imsanity_verify_permission() {
 function imsanity_get_images() {
 	imsanity_verify_permission();
 
+	$resume_id = ! empty( $_POST['resume_id'] ) ? (int) $_POST['resume_id'] : PHP_INT_MAX;
 	global $wpdb;
+	// Load up all the image attachments we can find.
+	$attachments = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID < %d AND post_type = 'attachment' AND post_mime_type LIKE %s ORDER BY ID DESC", $resume_id, '%%image%%' ) );
+	array_walk( $attachments, 'intval' );
+	die( json_encode( $attachments ) );
+
+	// TODO: that's all, get rid of the rest.
 	$offset  = 0;
 	$limit   = apply_filters( 'imsanity_attachment_query_limit', 3000 );
 	$results = array();
@@ -118,7 +126,6 @@ function imsanity_ajax_resize() {
 	imsanity_verify_permission();
 
 	$id = (int) $_POST['id'];
-
 	if ( ! $id ) {
 		die(
 			json_encode(
@@ -130,6 +137,21 @@ function imsanity_ajax_resize() {
 		);
 	}
 	$results = imsanity_resize_from_id( $id );
+	if ( ! empty( $_POST['resumable'] ) ) {
+		update_option( 'imsanity_resume_id', $id, false );
+		sleep( 1 );
+	}
 
 	die( json_encode( $results ) );
+}
+
+/**
+ * Finalizes the resizing process.
+ */
+function imsanity_ajax_finish() {
+	imsanity_verify_permission();
+
+	update_option( 'imsanity_resume_id', 0, false );
+
+	die();
 }

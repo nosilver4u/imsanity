@@ -135,6 +135,14 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.7.0 =
+* changed: bulk resizer will resize all images with no limits, use list mode for selective resizing
+* added: see current dimensions and resize individual images in Media Library list mode
+* added: imsanity_disable_convert filter to bypass BMP/PNG to JPG conversion options conditionally
+* changed: PNG images will not be converted if transparency is found
+* fixed: BMP files not converted when server uses image/x-ms-bmp as mime identifier
+* removed: Deep Scan option is the default behavior now, no need for configuration
+
 = 2.6.1 =
 * fixed: wrong parameter passed to imsanity_attachment_path()
 
@@ -151,28 +159,6 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 * fixed: settings link on plugins page broken in some cases
 * fixed: crop filter not applied if max width or height is equal to existing dimension
 * fixed: invalid capabilities used for settings page - props @cfoellmann
-
-= 2.4.3 =
-* changed: default size from 2048 to 1920
-* fixed: WP Import plugin breaks during Media imports
-* fixed: setting a value to 0 causes errors on multi-site
-* fixed: conversion settings not displaying correctly on multi-site
-
-= 2.4.2 =
-* changed: noresize in filename also works in batch processing
-* fixed: error message does not contain filename when file is missing
-* fixed: notice on network settings when deep scan option has not been set before
-
-= 2.4.1 =
-* fixed: bulk resizer scan returning incorrect results
-* fixed: sprintf error during resizing and upload
-
-= 2.4.0 =
-* added: deep scanning option for when attachment metadata isn't updating properly
-* fixed: uploads from Gutenberg not detected properly
-* fixed: some other plugin(s) trying to muck with the Imsanity settings links and breaking things
-* fixed: undefined notice for query during ajax operation
-* fixed: stale metadata could prevent further resizing
 
 = Earlier versions =
 Please refer to the separate changelog.txt file.
