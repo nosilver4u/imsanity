@@ -102,7 +102,7 @@ function imsanity_resize_next(next_index) {
 				}
 			}
 
-			target.animate({scrollTop: target.prop('scrollHeight')}, 400);
+			target.animate({scrollTop: target.prop('scrollHeight')}, 200);
 			// recurse
 			imsanity_resize_next(next_index+1);
 		}

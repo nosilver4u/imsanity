@@ -103,7 +103,7 @@ function imsanity_queue_script( $hook ) {
 		'imsanity_vars',
 		array(
 			'_wpnonce'          => wp_create_nonce( 'imsanity-bulk' ),
-			'resizing_complete' => esc_html__( 'Resizing Complete', 'imsanity' ),
+			'resizing_complete' => esc_html__( 'Resizing Complete', 'imsanity' ) . ' - <a target="_blank" href="https://wordpress.org/support/plugin/imsanity/reviews/#new-post">' . esc_html__( 'Leave a Review', 'imsanity' ) . '</a>',
 			'resize_selected'   => esc_html__( 'Resize Selected Images', 'imsanity' ),
 			'resizing'          => '<p>' . esc_html__( 'Please wait...', 'imsanity' ) . "&nbsp;<img src='$loading_image' /></p>",
 			'removal_failed'    => esc_html__( 'Removal Failed', 'imsanity' ),
@@ -628,8 +628,9 @@ function imsanity_settings_page() {
 	<div class="wrap">
 	<h1><?php esc_html_e( 'Imsanity Settings', 'imsanity' ); ?></h1>
 	<p>
-		<a href="https://wordpress.org/plugins/imsanity/#faq-header"><?php esc_html_e( 'FAQ', 'imsanity' ); ?></a> |
-		<a href="https://wordpress.org/support/plugin/imsanity/"><?php esc_html_e( 'Support', 'imsanity' ); ?></a>
+		<a target="_blank" href="https://wordpress.org/plugins/imsanity/#faq-header"><?php esc_html_e( 'FAQ', 'imsanity' ); ?></a> |
+		<a target="_blank" href="https://wordpress.org/support/plugin/imsanity/"><?php esc_html_e( 'Support', 'imsanity' ); ?></a> |
+		<a target="_blank" href="https://wordpress.org/support/plugin/imsanity/reviews/#new-post"><?php esc_html_e( 'Leave a Review', 'imsanity' ); ?></a>
 	</p>
 
 	<div id="ewwwio-promo">
@@ -678,7 +679,7 @@ function imsanity_settings_page() {
 		</p>
 	</div>
 
-	<div style="border: solid 1px #ff6666; background-color: #ffbbbb; padding: 0 10px;">
+	<div style="border: solid 1px #ff6666; background-color: #ffbbbb; padding: 0 10px;margin-bottom:1em;">
 		<h4><?php esc_html_e( 'WARNING: Bulk Resize will alter your original images and cannot be undone!', 'imsanity' ); ?></h4>
 		<p>
 			<?php esc_html_e( 'It is HIGHLY recommended that you backup your images before proceeding.', 'imsanity' ); ?><br>
@@ -702,7 +703,7 @@ function imsanity_settings_page() {
 	<p class="submit" id="imsanity-examine-button">
 		<button class="button-primary" onclick="imsanity_load_images();"><?php echo esc_html( $button_text ); ?></button>
 	</p>
-	<form id="imsanity-bulk-stop" style="display:none;margin:2em 0 1em;" method="post" action="">
+	<form id="imsanity-bulk-stop" style="display:none;margin:1em 0 1em;" method="post" action="">
 		<button type="submit" class="button-secondary action"><?php esc_html_e( 'Stop Resizing', 'imsanity' ); ?></button>
 	</form>
 	<?php if ( get_option( 'imsanity_resume_id' ) ) : ?>
@@ -713,7 +714,7 @@ function imsanity_settings_page() {
 		<button id="imsanity-bulk-reset" type="submit" class="button-secondary action"><?php esc_html_e( 'Start Over', 'imsanity' ); ?></button>
 	</form>
 	<?php endif; ?>
-	<div id="imsanity_loading" style="display: none;margin:2em 0 1em;"><img src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" style="margin-bottom: .25em; vertical-align:middle;" />
+	<div id="imsanity_loading" style="display: none;margin:1em 0 1em;"><img src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" style="margin-bottom: .25em; vertical-align:middle;" />
 		<?php esc_html_e( 'Searching for images. This may take a moment.', 'imsanity' ); ?>
 	</div>
 	<div id="resize_results" style="display: none; border: solid 2px #666666; padding: 10px; height: 400px; overflow: auto;">

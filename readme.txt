@@ -1,37 +1,30 @@
 === Imsanity ===
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
-Tags: image, scale, resize, space saver, quality
+Tags: image, scale, resize, space saver, quality, upload
 Requires at least: 5.0
-Tested up to: 5.4
+Tested up to: 5.6
 Requires PHP: 5.6
 Stable tag: 2.6.1
 License: GPLv3
 
-Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually scaling? Imsanity to the rescue!
+Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
 
 == Description ==
 
-Imsanity automatically resizes huge image uploads down to a size that is
-more reasonable for display in browser, yet still more than large enough for typical website use.
-The plugin is configurable with a max width, height and quality.  When a contributor uploads an
-image that is larger than the configured size, Imsanity will automatically scale it down to the
-configured size and replace the original image.
+Automatically resize huge image uploads with Imsanity. Choose whatever size and quality you like, and let Imsanity do the rest.  When a contributor uploads an image that is larger than the configured size, Imsanity will automatically scale it down to the configured size and replace the original image.
 
-Imsanity also provides a bulk-resize feature to selectively resize previously uploaded images
-to free up disk space.
+Imsanity also provides a bulk-resize feature to resize previously uploaded images and free up disk space. You may resize individual images from the Media Library's List View.
 
-This plugin is ideal for blogs that do not require hi-resolution original images
-to be stored and/or the contributors don't want (or understand how) to scale images
-before uploading.
+This plugin is ideal for blogs that do not require hi-resolution original images to be stored and/or the contributors don't want (or understand how) to scale images before uploading.
 
 = Features =
 
 * Automatically scales large image uploads to a more "sane" size
-* Bulk-resize feature to selectively resize existing images
-* Allows configuration of max width/height and jpg quality
-* Optionally converts BMP files to JPG so image can be scaled
-* Option to convert PNG files to JPG format for higher compression
+* Bulk resize feature to resize existing images
+* Selectively resize images directly in the Media Library (List View)
+* Allows configuration of max width/height and JPG quality
+* Optionally converts BMP and PNG files to JPG for more savings
 * Once enabled, Imsanity requires no actions on the part of the user
 * Uses WordPress built-in image scaling functions
 
@@ -64,70 +57,48 @@ Manual Installation:
 
 == Frequently Asked Questions ==
 
-= What is Imsanity? =
-
-Imsanity is a plugin that automatically resizes uploaded images that are larger than the configured max width/height
-
 = Will installing the Imsanity plugin alter existing images in my blog? =
 
-Activating Imsanity will not alter any existing images.  Imsanity resizes images as they are uploaded so
-it does not affect existing images unless you specifically use the "Bulk Image Resize" feature on
-the Imsanity settings page.  The "Bulk Image Resize" feature allows you to selectively resize existing images.
-
-= Why aren't all of my images detected when I try to use the bulk resize feature? =
-
-Imsanity doesn't search your file system to find large files, instead it looks at the "metadata"
-in the WordPress media library database. To override this behavior, enable deep scanning.
+Activating Imsanity will not alter any existing images.  Imsanity resizes images as they are uploaded so it does not affect existing images unless you specifically use the "Bulk Image Resize" feature on the Imsanity settings page.  The Bulk Resize feature allows you to quickly resize existing images.
 
 = Why am I getting an error saying that my "File is not an image" ? =
 
-WordPress uses the GD library to handle the image manipulation.  GD can be installed and configured to support
-various types of images.  If GD is not configured to handle a particular image type then you will get
-this message when you try to upload it.  For more info see http://php.net/manual/en/image.installation.php
+WordPress uses the GD library to handle the image manipulation.  GD can be installed and configured to support various types of images.  If GD is not configured to handle a particular image type then you will get this message when you try to upload it.  For more info see http://php.net/manual/en/image.installation.php
 
 = How can I tell Imsanity to ignore a certain image so I can upload it without being resized? =
 
-You can re-name your file and add "-noresize" to the filename.  For example if your file is named
-"photo.jpg" you can rename it "photo-noresize.jpg" and Imsanity will ignore it, allowing you
-to upload the full-sized image.
+You can re-name your file and add "-noresize" to the filename.  For example if your file is named "photo.jpg" you can rename it "photo-noresize.jpg" and Imsanity will ignore it, allowing you to upload the full-sized image.
 
-Optionally you can temporarily adjust the max image size settings and set them to a number that is
-higher than the resolution of the image you wish to upload
+If you are a developer (or have one handy), you can also use the 'imsanity_skip_image' filter to bypass resizing for any image.
+
+= Does Imsanity compress or optimize my images? =
+
+While Imsanity does compress JPG images in the process of resizing them, it uses the standard WordPress compression. Thus, the resulting images are not efficiently encoded and can be optimized further (without quality loss) by the EWWW Image Optimizer and many other image optimization plugins.
+
+= Will Imsanity resize images from plugin X, Y, or Z? =
+
+If the images can be found in the Media Library of your site, then it is likely Imsanity will resize them. Imsanity uses the wp_handle_upload hook to process new uploads and can resize any existing images in the Media Library using the Bulk Resizer. If the images are not in the Media Library, you can use the EWWW Image Optimizer to resize them.
 
 = Why would I need this plugin? =
 
-Photos taken on any modern camera and even most cellphones are too large for display full-size in a browser.
-In the case of modern DSLR cameras, the image sizes are intended for high-quality printing and are ridiculously
-over-sized for display on a web page.
+Photos taken on any modern camera and most cellphones are too large to display full-size in a browser.
+This wastes space on your web server, and wastes bandwidth for your visitors to view these files.
 
-Imsanity allows you to set a sanity limit so that all uploaded images will be constrained
-to a reasonable size which is still more than large enough for the needs of a typical website.
-Imsanity hooks into WordPress immediately after the image upload, but before WordPress processing
-occurs.  So WordPress behaves exactly the same in all ways, except it will be as if the contributor
-had scaled their image to a reasonable size before uploading.
+Imsanity allows you to set a sanity limit so that all uploaded images will be constrained to a reasonable size which is still more than large enough for the needs of a typical website. Imsanity hooks into WordPress immediately after the image upload, but before WordPress processing occurs. So WordPress behaves exactly the same in all ways, except it will be as if the contributor had scaled their image to a reasonable size before uploading.
 
-The size limit that imsanity uses is configurable.  The default value is large enough to fill
-the average vistors entire screen without scaling so it is still more than large enough for
-typical usage.
+The size limit that imsanity uses is configurable. The default value is large enough to fill the average vistor's entire screen without scaling so it is still more than large enough for typical usage.
 
 = Why would I NOT want to use this plugin? =
 
-You might not want to use Imsanity if you use WordPress as a stock art download
-site, provide high-res images for print or use WordPress as a high-res photo
-storage archive.  If you are doing any of these things then most likely
-you already have a good understanding of image resolution.
+You might not want to use Imsanity if you use WordPress as a stock art download site, to provide hi-resolution images for print or use WordPress as a hi-resolution photo storage archive.
 
 = Doesn't WordPress already automatically scale images? =
 
-When an image is uploaded WordPress keeps the original and, depending on the size of the original,
-will create up to 4 smaller sized copies of the file (Large, Medium-Large, Medium, Thumbnail) which are intended
-for embedding on your pages.  Unless you have special photographic needs, the original usually sits
-there unused, but taking up disk quota.
+When an image is uploaded WordPress keeps the original and, depending on the size of the original, will create up to 4 smaller sized copies of the file (Large, Medium-Large, Medium, Thumbnail) which are intended for embedding on your pages.  Unless you have special photographic needs, the original usually sits there unused, but taking up disk quota.
 
 = Why did you spell Insanity wrong? =
 
-Imsanity is short for "Image Sanity Limit". A sanity limit is a term for limiting something down to
-a size or value that is reasonable.
+Imsanity is short for "Image Sanity Limit". A sanity limit is a term for limiting something down to a size or value that is reasonable.
 
 = Where do I go for support? =
 
