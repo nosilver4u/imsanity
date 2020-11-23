@@ -130,6 +130,10 @@ function imsanity_resize_complete() {
  * @param string the id of the html element into which results will be appended
  */
 function imsanity_load_images() {
+	var imsanity_really_resize_all = confirm(imsanity_vars.resize_all_prompt);
+	if ( ! imsanity_really_resize_all ) {
+		return;
+	}
 	jQuery('#imsanity-examine-button').hide();
 	jQuery('.imsanity-bulk-text').hide();
 	jQuery('#imsanity-bulk-reset').hide();

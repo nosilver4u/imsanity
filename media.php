@@ -72,13 +72,13 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 			return;
 		}
 		// Let folks filter the allowed mime-types for resizing.
-		$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $meta['file'] );
+		$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $file_path );
 		if ( is_string( $allowed_types ) ) {
 			$allowed_types = array( $allowed_types );
 		} elseif ( ! is_array( $allowed_types ) ) {
 			$allowed_types = array();
 		}
-		$ftype = imsanity_quick_mimetype( $meta['file'] );
+		$ftype = imsanity_quick_mimetype( $file_path );
 		if ( ! in_array( $ftype, $allowed_types, true ) ) {
 			echo '</div>';
 			return;
@@ -115,15 +115,18 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 				$original_image = wp_get_original_image_path( $id, true );
 			}
 			if ( ! empty( $original_image ) && is_file( $original_image ) && is_writable( $original_image ) ) {
-				$manual_nonce = wp_create_nonce( 'imsanity-manual-resize' );
-				// Give the user the option to optimize the image right now.
-				printf(
-					'<div><button class="imsanity-manual-remove-original button button-secondary" data-id="%1$d" data-nonce="%2$s">%3$s</button>',
-					$id,
-					esc_attr( $manual_nonce ),
-					esc_html__( 'Remove Original', 'imsanity' )
-				);
+				$link_text = __( 'Remove Original', 'imsanity' );
+			} else {
+				$link_text = __( 'Remove Original Link', 'imsanity' );
 			}
+			$manual_nonce = wp_create_nonce( 'imsanity-manual-resize' );
+			// Give the user the option to optimize the image right now.
+			printf(
+				'<div><button class="imsanity-manual-remove-original button button-secondary" data-id="%1$d" data-nonce="%2$s">%3$s</button>',
+				$id,
+				esc_attr( $manual_nonce ),
+				esc_html( $link_text )
+			);
 		}
 		echo '</div>';
 	}

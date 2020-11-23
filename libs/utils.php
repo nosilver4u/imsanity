@@ -381,10 +381,12 @@ function imsanity_remove_original_image( $id, $meta = null ) {
 			$original_image = wp_get_original_image_path( $id, true );
 		}
 		if ( ! empty( $original_image ) && is_file( $original_image ) && is_writable( $original_image ) ) {
-			if ( unlink( $original_image ) ) {
-				unset( $meta['original_image'] );
-				return $meta;
-			}
+			unlink( $original_image );
+		}
+		clearstatcache();
+		if ( empty( $original_image ) || ! is_file( $original_image ) ) {
+			unset( $meta['original_image'] );
+			return $meta;
 		}
 	}
 	return false;

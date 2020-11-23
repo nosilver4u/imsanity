@@ -106,6 +106,10 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.7.1 =
+* changed: clarify text for queue reset button
+* changed: Delete Originals function in bulk/selective resizer will clean metadata if original image is already gone
+
 = 2.7.0 =
 * changed: bulk resizer will resize all images with no limits, use list mode for selective resizing
 * added: see current dimensions and resize individual images in Media Library list mode

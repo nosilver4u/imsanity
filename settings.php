@@ -103,6 +103,7 @@ function imsanity_queue_script( $hook ) {
 		'imsanity_vars',
 		array(
 			'_wpnonce'          => wp_create_nonce( 'imsanity-bulk' ),
+			'resize_all_prompt' => esc_html__( 'You are about to resize all your existing images. Please be sure your site is backed up before proceeding. Do you wish to continue?', 'imsanity' ),
 			'resizing_complete' => esc_html__( 'Resizing Complete', 'imsanity' ) . ' - <a target="_blank" href="https://wordpress.org/support/plugin/imsanity/reviews/#new-post">' . esc_html__( 'Leave a Review', 'imsanity' ) . '</a>',
 			'resize_selected'   => esc_html__( 'Resize Selected Images', 'imsanity' ),
 			'resizing'          => '<p>' . esc_html__( 'Please wait...', 'imsanity' ) . "&nbsp;<img src='$loading_image' /></p>",
@@ -711,7 +712,7 @@ function imsanity_settings_page() {
 	<form class="imsanity-bulk-form" method="post" action="">
 		<?php wp_nonce_field( 'imsanity-bulk-reset', 'imsanity_wpnonce' ); ?>
 		<input type="hidden" name="imsanity_reset" value="1">
-		<button id="imsanity-bulk-reset" type="submit" class="button-secondary action"><?php esc_html_e( 'Start Over', 'imsanity' ); ?></button>
+		<button id="imsanity-bulk-reset" type="submit" class="button-secondary action"><?php esc_html_e( 'Clear Queue', 'imsanity' ); ?></button>
 	</form>
 	<?php endif; ?>
 	<div id="imsanity_loading" style="display: none;margin:1em 0 1em;"><img src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" style="margin-bottom: .25em; vertical-align:middle;" />
