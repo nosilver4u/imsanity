@@ -145,7 +145,7 @@ function imsanity_load_images() {
 		function(response) {
 			var is_json = true;
 			try {
-				var images = jQuery.parseJSON(response);
+				var images = JSON.parse(response);
 			} catch ( err ) {
 				is_json = false;
 			}

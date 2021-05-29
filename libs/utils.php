@@ -356,11 +356,40 @@ function imsanity_resize_from_id( $id = 0 ) {
 }
 
 /**
+ * Find the path to a backed-up original (not the full-size version like the core WP function).
+ *
+ * @param int    $id The attachment ID number.
+ * @param string $image_file The path to a scaled image file.
+ * @param array  $meta The attachment metadata. Optional, default to null.
+ * @return bool True on success, false on failure.
+ */
+function imsanity_get_original_image_path( $id, $image_file = '', $meta = null ) {
+	$id = (int) $id;
+	if ( empty( $id ) ) {
+		return false;
+	}
+	if ( ! wp_attachment_is_image( $id ) ) {
+		return false;
+	}
+	if ( is_null( $meta ) ) {
+		$meta = wp_get_attachment_metadata( $id );
+	}
+	if ( empty( $image_file ) ) {
+		$image_file = get_attached_file( $id, true );
+	}
+	if ( empty( $image_file ) || ! is_iterable( $meta ) || empty( $meta['original_image'] ) ) {
+		return false;
+	}
+
+	return trailingslashit( dirname( $image_file ) ) . wp_basename( $meta['original_image'] );
+}
+
+/**
  * Remove the backed-up original_image stored by WP 5.3+.
  *
  * @param int   $id The attachment ID number.
  * @param array $meta The attachment metadata. Optional, default to null.
- * @return bool True on success, false on failure.
+ * @return bool|array Returns meta if modified, false otherwise (even if an "unlinked" original is removed).
  */
 function imsanity_remove_original_image( $id, $meta = null ) {
 	$id = (int) $id;
@@ -376,11 +405,8 @@ function imsanity_remove_original_image( $id, $meta = null ) {
 		imsanity_get_option( 'imsanity_delete_originals', false ) &&
 		! empty( $meta['original_image'] ) && function_exists( 'wp_get_original_image_path' )
 	) {
-		$original_image = wp_get_original_image_path( $id );
-		if ( empty( $original_image ) || ! is_file( $original_image ) ) {
-			$original_image = wp_get_original_image_path( $id, true );
-		}
-		if ( ! empty( $original_image ) && is_file( $original_image ) && is_writable( $original_image ) ) {
+		$original_image = imsanity_get_original_image_path( $id, '', $meta );
+		if ( $original_image && is_file( $original_image ) && is_writable( $original_image ) ) {
 			unlink( $original_image );
 		}
 		clearstatcache();

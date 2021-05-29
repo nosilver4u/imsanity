@@ -705,7 +705,8 @@ function imsanity_settings_page() {
 		<button class="button-primary" onclick="imsanity_load_images();"><?php echo esc_html( $button_text ); ?></button>
 	</p>
 	<form id="imsanity-bulk-stop" style="display:none;margin:1em 0 1em;" method="post" action="">
-		<button type="submit" class="button-secondary action"><?php esc_html_e( 'Stop Resizing', 'imsanity' ); ?></button>
+		<button type="submit" class="button-secondary action"><?php esc_html_e( 'Stop Resizing', 'imsanity' ); ?></button><br>
+		*<i><?php esc_html_e( 'You will be able to resume the process later.', 'imsanity' ); ?></i>
 	</form>
 	<?php if ( get_option( 'imsanity_resume_id' ) ) : ?>
 	<p class="imsanity-bulk-text" style="margin-top:1em;"><?php esc_html_e( 'Would you like to start back at the beginning?', 'imsanity' ); ?></p>

@@ -13,9 +13,8 @@ Plugin Name: Imsanity
 Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
-Text Domain: imsanity
 Domain Path: /languages
-Version: 2.7.1
+Version: 2.7.1.1
 Author URI: https://ewww.io/
 License: GPLv3
 */
@@ -226,7 +225,7 @@ function imsanity_handle_upload( $params ) {
 
 		list( $oldw, $oldh ) = getimagesize( $oldpath );
 
-		if ( ( $oldw > $maxw && $maxw > 0 ) || ( $oldh > $maxh && $maxh > 0 ) ) {
+		if ( ( $oldw > $maxw + 1 && $maxw > 0 ) || ( $oldh > $maxh + 1 && $maxh > 0 ) ) {
 			$quality = imsanity_get_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY );
 
 			$ftype       = imsanity_quick_mimetype( $oldpath );
@@ -258,12 +257,12 @@ function imsanity_handle_upload( $params ) {
 				$newpath = $resizeresult;
 
 				if ( is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
-					// we saved some file space. remove original and replace with resized image.
+					// We saved some file space. remove original and replace with resized image.
 					unlink( $oldpath );
 					rename( $newpath, $oldpath );
 				} elseif ( is_file( $newpath ) ) {
-					// theresized image is actually bigger in filesize (most likely due to jpg quality).
-					// keep the old one and just get rid of the resized image.
+					// The resized image is actually bigger in filesize (most likely due to jpg quality).
+					// Keep the old one and just get rid of the resized image.
 					unlink( $newpath );
 				}
 			} elseif ( false === $resizeresult ) {
