@@ -1,3 +1,7 @@
+= 2.7.2 =
+* fixed: delete originals might remove full-size version in rare cases
+* fixed: error thrown for image that is 1 pixel larger than max dimensions
+
 = 2.7.1 =
 * changed: clarify text for queue reset button
 * changed: Delete Originals function in bulk/selective resizer will clean metadata if original image is already gone
