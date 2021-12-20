@@ -15,6 +15,8 @@ Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Domain Path: /languages
 Version: 2.7.2
+Requires at least: 5.1
+Requires PHP: 5.6
 Author URI: https://ewww.io/
 License: GPLv3
 */
