@@ -80,9 +80,30 @@ function imsanity_quick_mimetype( $path ) {
 			return 'image/gif';
 		case 'pdf':
 			return 'application/pdf';
+		case 'webp':
+			return 'image/webp';
 		default:
 			return false;
 	}
+}
+
+/**
+ * Check for WebP support in the image editor and add to the list of allowed mimes.
+ *
+ * @param array $mimes A list of allowed mime types.
+ * @return array The updated list of mimes after checking WebP support.
+ */
+function imsanity_add_webp_support( $mimes ) {
+	if ( ! in_array( 'image/webp', $mimes, true ) ) {
+		if ( class_exists( 'Imagick' ) ) {
+			$imagick = new Imagick();
+			$formats = $imagick->queryFormats();
+			if ( in_array( 'WEBP', $formats, true ) ) {
+				$mimes[] = 'image/webp';
+			}
+		}
+	}
+	return $mimes;
 }
 
 /**
@@ -436,9 +457,13 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 		if ( is_wp_error( $editor ) ) {
 			return $editor;
 		}
-		$editor->set_quality( min( 92, $jpeg_quality ) );
 
 		$ftype = imsanity_quick_mimetype( $file );
+		if ( 'image/webp' === $ftype ) {
+			$jpeg_quality = (int) round( $jpeg_quality * .91 );
+		}
+
+		$editor->set_quality( min( 92, $jpeg_quality ) );
 
 		// Return 1 to override auto-rotate.
 		$orientation = (int) apply_filters( 'imsanity_orientation', imsanity_get_orientation( $file, $ftype ) );

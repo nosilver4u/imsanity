@@ -101,8 +101,6 @@ function imsanity_resize_next(next_index) {
 					console.warn('Invalid JSON Response: ' + response);
 				}
 			}
-
-			target.animate({scrollTop: target.prop('scrollHeight')}, 200);
 			// recurse
 			imsanity_resize_next(next_index+1);
 		}
@@ -122,7 +120,6 @@ function imsanity_resize_complete() {
 			{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_bulk_complete'}
 		);
 	}
-	target.animate({scrollTop: target.prop('scrollHeight')});
 }
 
 /**

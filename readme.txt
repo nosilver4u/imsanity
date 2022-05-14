@@ -106,6 +106,10 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.8.0 =
+* added: support for resizing WebP images via ImageMagick
+* fixed: JS scroller during bulk resize causes unexpected behavior
+
 = 2.7.2 =
 * fixed: delete originals might remove full-size version in rare cases
 * fixed: error thrown for image that is 1 pixel larger than max dimensions

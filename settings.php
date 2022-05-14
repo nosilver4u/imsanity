@@ -311,7 +311,7 @@ function imsanity_network_settings() {
 			</th>
 			<td>
 				<input type='text' id='imsanity_quality' name='imsanity_quality' class='small-text' value='<?php echo (int) $settings->imsanity_quality; ?>' />
-				<?php esc_html_e( 'Valid values are 1-100.', 'imsanity' ); ?>
+				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
 				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
 			</td>
 		</tr>
@@ -791,7 +791,7 @@ function imsanity_settings_page_form() {
 			</th>
 			<td>
 				<input type='text' id='imsanity_quality' name='imsanity_quality' class='small-text' value='<?php echo imsanity_jpg_quality(); ?>' />
-				<?php esc_html_e( 'Valid values are 1-100.', 'imsanity' ); ?>
+				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
 				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
 			</td>
 		</tr>
