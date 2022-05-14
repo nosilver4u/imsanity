@@ -2,9 +2,9 @@
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality, upload
-Requires at least: 5.1
-Tested up to: 5.7
-Requires PHP: 5.6
+Requires at least: 5.5
+Tested up to: 5.9
+Requires PHP: 7.2
 Stable tag: 2.7.2
 License: GPLv3
 
@@ -108,6 +108,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 = 2.8.0 =
 * added: support for resizing WebP images via ImageMagick
+* changed: use original image for resizing if full size version was scaled by WordPress
 * fixed: JS scroller during bulk resize causes unexpected behavior
 
 = 2.7.2 =

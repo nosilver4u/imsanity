@@ -281,7 +281,12 @@ function imsanity_resize_from_id( $id = 0 ) {
 				list( $neww, $newh ) = wp_constrain_dimensions( $oldw, $oldh, $maxw, $maxh );
 			}
 
-			$resizeresult = imsanity_image_resize( $oldpath, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
+			$source_image = $oldpath;
+			if ( ! empty( $meta['original_image'] ) ) {
+				$source_image = path_join( dirname( $oldpath ), $meta['original_image'] );
+				imsanity_debug( "subbing in $source_image for resizing" );
+			}
+			$resizeresult = imsanity_image_resize( $source_image, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
 
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
 				$newpath = $resizeresult;
@@ -453,6 +458,7 @@ function imsanity_remove_original_image( $id, $meta = null ) {
  */
 function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null, $jpeg_quality = 82 ) {
 	if ( function_exists( 'wp_get_image_editor' ) ) {
+		imsanity_debug( "resizing $file" );
 		$editor = wp_get_image_editor( $file );
 		if ( is_wp_error( $editor ) ) {
 			return $editor;
