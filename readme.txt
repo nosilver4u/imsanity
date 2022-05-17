@@ -108,6 +108,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 = 2.8.0 =
 * added: support for resizing WebP images via ImageMagick
+* changed: update attachment file size to keep WP 6.0 metadata in sync
 * changed: use original image for resizing if full size version was scaled by WordPress
 * fixed: JS scroller during bulk resize causes unexpected behavior
 

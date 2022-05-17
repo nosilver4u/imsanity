@@ -364,7 +364,12 @@ function imsanity_resize_from_id( $id = 0 ) {
 			$update_meta = true;
 		}
 		if ( ! empty( $update_meta ) ) {
+			clearstatcache();
+			if ( ! empty( $oldpath ) && is_file( $oldpath ) ) {
+				$meta['filesize'] = filesize( $oldpath );
+			}
 			wp_update_attachment_metadata( $id, $meta );
+			do_action( 'imsanity_post_process_attachment', $id, $meta );
 		}
 	} else {
 		$results = array(
