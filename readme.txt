@@ -5,7 +5,7 @@ Tags: image, scale, resize, space saver, quality, upload
 Requires at least: 5.5
 Tested up to: 6.0
 Requires PHP: 7.2
-Stable tag: 2.7.2
+Stable tag: 2.8.0
 License: GPLv3
 
 Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
