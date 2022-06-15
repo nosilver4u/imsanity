@@ -257,7 +257,7 @@ function imsanity_network_settings() {
 		printf(
 			/* translators: %s: link to install EWWW Image Optimizer plugin */
 			esc_html__( 'Get comprehensive image optimization with %s', 'imsanity' ),
-			'<br><a href="' . admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) . '">EWWW Image Optimizer</a>'
+			'<br><a href="' . esc_url( admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) ) . '">EWWW Image Optimizer</a>'
 		);
 		?>
 			<ul>
@@ -334,7 +334,7 @@ function imsanity_network_settings() {
 				printf(
 					/* translators: %s: link to install EWWW Image Optimizer plugin */
 					esc_html__( 'Only applies to new image uploads, existing images may be converted with %s.', 'imsanity' ),
-					'<a href="' . admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) . '">EWWW Image Optimizer</a>'
+					'<a href="' . esc_url( admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) ) . '">EWWW Image Optimizer</a>'
 				);
 				?>
 			</td>
@@ -363,7 +363,7 @@ function imsanity_network_settings() {
  * and clear the cached settings
  */
 function imsanity_network_settings_update() {
-	if ( ! current_user_can( 'manage_options' ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'imsanity_network_options' ) ) {
+	if ( ! current_user_can( 'manage_options' ) || empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity_network_options' ) ) {
 		return;
 	}
 	global $wpdb;
@@ -376,16 +376,16 @@ function imsanity_network_settings_update() {
 
 	$data = new stdClass();
 
-	$data->imsanity_override_site      = (bool) $_POST['imsanity_override_site'];
-	$data->imsanity_max_height         = sanitize_text_field( $_POST['imsanity_max_height'] );
-	$data->imsanity_max_width          = sanitize_text_field( $_POST['imsanity_max_width'] );
-	$data->imsanity_max_height_library = sanitize_text_field( $_POST['imsanity_max_height_library'] );
-	$data->imsanity_max_width_library  = sanitize_text_field( $_POST['imsanity_max_width_library'] );
-	$data->imsanity_max_height_other   = sanitize_text_field( $_POST['imsanity_max_height_other'] );
-	$data->imsanity_max_width_other    = sanitize_text_field( $_POST['imsanity_max_width_other'] );
+	$data->imsanity_override_site      = isset( $_POST['imsanity_override_site'] ) ? (bool) $_POST['imsanity_override_site'] : false;
+	$data->imsanity_max_height         = isset( $_POST['imsanity_max_height'] ) ? (int) $_POST['imsanity_max_height'] : 0;
+	$data->imsanity_max_width          = isset( $_POST['imsanity_max_width'] ) ? (int) $_POST['imsanity_max_width'] : 0;
+	$data->imsanity_max_height_library = isset( $_POST['imsanity_max_height_library'] ) ? (int) $_POST['imsanity_max_height_library'] : 0;
+	$data->imsanity_max_width_library  = isset( $_POST['imsanity_max_width_library'] ) ? (int) $_POST['imsanity_max_width_library'] : 0;
+	$data->imsanity_max_height_other   = isset( $_POST['imsanity_max_height_other'] ) ? (int) $_POST['imsanity_max_height_other'] : 0;
+	$data->imsanity_max_width_other    = isset( $_POST['imsanity_max_width_other'] ) ? (int) $_POST['imsanity_max_width_other'] : 0;
 	$data->imsanity_bmp_to_jpg         = ! empty( $_POST['imsanity_bmp_to_jpg'] );
 	$data->imsanity_png_to_jpg         = ! empty( $_POST['imsanity_png_to_jpg'] );
-	$data->imsanity_quality            = imsanity_jpg_quality( $_POST['imsanity_quality'] );
+	$data->imsanity_quality            = isset( $_POST['imsanity_quality'] ) ? imsanity_jpg_quality( intval( $_POST['imsanity_quality'] ) ) : 82;
 	$data->imsanity_delete_originals   = ! empty( $_POST['imsanity_delete_originals'] );
 
 	$success = $wpdb->update(
@@ -513,7 +513,8 @@ function imsanity_set_defaults() {
 function imsanity_register_settings() {
 	imsanity_upgrade();
 	// We only want to update if the form has been submitted.
-	if ( isset( $_POST['update_imsanity_settings'] ) && is_multisite() && is_network_admin() ) {
+	// Verification is done inside the imsanity_network_settings_update() function.
+	if ( isset( $_POST['update_imsanity_settings'] ) && is_multisite() && is_network_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification
 		imsanity_network_settings_update();
 	}
 	// Register our settings.
@@ -640,7 +641,7 @@ function imsanity_settings_page() {
 		printf(
 			/* translators: %s: link to install EWWW Image Optimizer plugin */
 			esc_html__( 'Get comprehensive image optimization with %s', 'imsanity' ),
-			'<br><a href="' . admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) . '">EWWW Image Optimizer</a>'
+			'<br><a href="' . esc_url( admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) ) . '">EWWW Image Optimizer</a>'
 		);
 		?>
 			<ul>
@@ -716,11 +717,11 @@ function imsanity_settings_page() {
 		<button id="imsanity-bulk-reset" type="submit" class="button-secondary action"><?php esc_html_e( 'Clear Queue', 'imsanity' ); ?></button>
 	</form>
 	<?php endif; ?>
-	<div id="imsanity_loading" style="display: none;margin:1em 0 1em;"><img src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" style="margin-bottom: .25em; vertical-align:middle;" />
+	<div id="imsanity_loading" style="display: none;margin:1em 0 1em;"><img src="<?php echo esc_url( plugins_url( 'images/ajax-loader.gif', __FILE__ ) ); ?>" style="margin-bottom: .25em; vertical-align:middle;" />
 		<?php esc_html_e( 'Searching for images. This may take a moment.', 'imsanity' ); ?>
 	</div>
 	<div id="resize_results" style="display: none; border: solid 2px #666666; padding: 10px; height: 400px; overflow: auto;">
-		<div id="bulk-resize-beginning"><?php esc_html_e( 'Resizing...', 'imsanity' ); ?> <img src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" style="margin-bottom: .25em; vertical-align:middle;" /></div>
+		<div id="bulk-resize-beginning"><?php esc_html_e( 'Resizing...', 'imsanity' ); ?> <img src="<?php echo esc_url( plugins_url( 'images/ajax-loader.gif', __FILE__ ) ); ?>" style="margin-bottom: .25em; vertical-align:middle;" /></div>
 	</div>
 
 	<?php
@@ -790,7 +791,7 @@ function imsanity_settings_page_form() {
 				<label for='imsanity_quality' ><?php esc_html_e( 'JPG image quality', 'imsanity' ); ?>
 			</th>
 			<td>
-				<input type='text' id='imsanity_quality' name='imsanity_quality' class='small-text' value='<?php echo imsanity_jpg_quality(); ?>' />
+				<input type='text' id='imsanity_quality' name='imsanity_quality' class='small-text' value='<?php echo (int) imsanity_jpg_quality(); ?>' />
 				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
 				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
 			</td>
@@ -815,7 +816,7 @@ function imsanity_settings_page_form() {
 				printf(
 					/* translators: %s: link to install EWWW Image Optimizer plugin */
 					esc_html__( 'Only applies to new image uploads, existing images may be converted with %s.', 'imsanity' ),
-					'<a href="' . admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) . '">EWWW Image Optimizer</a>'
+					'<a href="' . esc_url( admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) ) . '">EWWW Image Optimizer</a>'
 				);
 				?>
 			</td>
@@ -837,5 +838,3 @@ function imsanity_settings_page_form() {
 	<?php
 
 }
-
-?>

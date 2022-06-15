@@ -104,7 +104,7 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 				// Give the user the option to optimize the image right now.
 				printf(
 					'<div><button class="imsanity-manual-resize button button-secondary" data-id="%1$d" data-nonce="%2$s">%3$s</button>',
-					$id,
+					(int) $id,
 					esc_attr( $manual_nonce ),
 					esc_html__( 'Resize Image', 'imsanity' )
 				);
@@ -123,7 +123,7 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 			// Give the user the option to optimize the image right now.
 			printf(
 				'<div><button class="imsanity-manual-remove-original button button-secondary" data-id="%1$d" data-nonce="%2$s">%3$s</button>',
-				$id,
+				(int) $id,
 				esc_attr( $manual_nonce ),
 				esc_html( $link_text )
 			);

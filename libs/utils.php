@@ -179,23 +179,6 @@ function imsanity_gd_support() {
 }
 
 /**
- * Output a fatal error and optionally die.
- *
- * @param string $message The message to output.
- * @param string $title A title/header for the message.
- * @param bool   $die Default false. Whether we should die.
- */
-function imsanity_fatal( $message, $title = '', $die = false ) {
-	echo ( "<div style='margin:5px 0px 5px 0px;padding:10px;border: solid 1px red; background-color: #ff6666; color: black;'>"
-		. ( $title ? "<h4 style='font-weight: bold; margin: 3px 0px 8px 0px;'>" . $title . '</h4>' : '' )
-		. $message
-		. '</div>' );
-	if ( $die ) {
-		die();
-	}
-}
-
-/**
  * Resizes the image with the given id according to the configured max width and height settings.
  *
  * @param int $id The attachment ID of the image to process.

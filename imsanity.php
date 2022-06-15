@@ -101,19 +101,21 @@ function imsanity_debug( $message ) {
  */
 function imsanity_get_source() {
 	imsanity_debug( __FUNCTION__ );
-	$id     = array_key_exists( 'post_id', $_REQUEST ) ? (int) $_REQUEST['post_id'] : '';
-	$action = array_key_exists( 'action', $_REQUEST ) ? $_REQUEST['action'] : '';
+	$id     = array_key_exists( 'post_id', $_REQUEST ) ? (int) $_REQUEST['post_id'] : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	$action = ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 	imsanity_debug( "getting source for id=$id and action=$action" );
 
-	imsanity_debug( $_SERVER );
-	if ( ! empty( $_REQUEST['_wp_http_referer'] ) ) {
-		imsanity_debug( '_wp_http_referer:' );
-		imsanity_debug( $_REQUEST['_wp_http_referer'] );
-	}
+	// Uncomment this (and remove the trailing .) to temporarily check the full $_SERVER vars.
+	// imsanity_debug( $_SERVER );.
+	$referer = '';
 	if ( ! empty( $_SERVER['HTTP_REFERER'] ) ) {
-		imsanity_debug( 'http_referer:' );
-		imsanity_debug( $_SERVER['HTTP_REFERER'] );
+		$referer = sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
+		imsanity_debug( "http_referer: $referer" );
 	}
+
+	$request_uri = wp_referer_field( false );
+	imsanity_debug( "request URI: $request_uri" );
+
 	// A post_id indicates image is attached to a post.
 	if ( $id > 0 ) {
 		imsanity_debug( 'from a post (id)' );
@@ -121,12 +123,12 @@ function imsanity_get_source() {
 	}
 
 	// If the referrer is the post editor, that's a good indication the image is attached to a post.
-	if ( ! empty( $_SERVER['HTTP_REFERER'] ) && strpos( $_SERVER['HTTP_REFERER'], '/post.php' ) ) {
+	if ( false !== strpos( $referer, '/post.php' ) ) {
 		imsanity_debug( 'from a post.php' );
 		return IMSANITY_SOURCE_POST;
 	}
 	// If the referrer is the (new) post editor, that's a good indication the image is attached to a post.
-	if ( ! empty( $_SERVER['HTTP_REFERER'] ) && strpos( $_SERVER['HTTP_REFERER'], '/post-new.php' ) ) {
+	if ( false !== strpos( $referer, '/post-new.php' ) ) {
 		imsanity_debug( 'from a new post' );
 		return IMSANITY_SOURCE_POST;
 	}
@@ -311,7 +313,9 @@ function imsanity_convert_to_jpg( $type, $params ) {
 	$img = null;
 
 	if ( 'bmp' === $type ) {
-		include_once( 'libs/imagecreatefrombmp.php' );
+		if ( ! function_exists( 'imagecreatefrombmp' ) ) {
+			return $params;
+		}
 		$img = imagecreatefrombmp( $params['file'] );
 	} elseif ( 'png' === $type ) {
 		// Prevent converting PNG images with alpha/transparency, unless overridden by the user.

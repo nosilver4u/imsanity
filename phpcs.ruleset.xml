@@ -12,4 +12,16 @@
 			<property name="custom_whitelist" type="array" value="exif_read_data"/>
 		</properties>
 	</rule>
+
+	<rule ref="PHPCompatibilityWP">
+		<severity>10</severity>
+	</rule>
+
+	<rule ref="WordPress.Security">
+		<severity>10</severity>
+	</rule>
+
+	<rule ref="WordPress.DB.PreparedSQL">
+		<severity>10</severity>
+	</rule>
 </ruleset>
