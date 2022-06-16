@@ -1,3 +1,7 @@
+= 2.8.1 =
+* changed: escape and sanitize more things
+* changed: tighten PHPCS rules used for pre-release testing
+
 = 2.8.0 =
 * added: support for resizing WebP images via ImageMagick
 * changed: update attachment file size to keep WP 6.0 metadata in sync

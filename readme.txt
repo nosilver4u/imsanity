@@ -5,7 +5,7 @@ Tags: image, scale, resize, space saver, quality, upload
 Requires at least: 5.5
 Tested up to: 6.0
 Requires PHP: 7.2
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 License: GPLv3
 
 Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
@@ -108,6 +108,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 = 2.8.1 =
 * changed: escape and sanitize more things
+* changed: tighten PHPCS rules used for pre-release testing
 
 = 2.8.0 =
 * added: support for resizing WebP images via ImageMagick
