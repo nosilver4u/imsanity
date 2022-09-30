@@ -106,6 +106,9 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.8.2 =
+* fixed: mime type error when filename in attachment metadata is incorrect
+
 = 2.8.1 =
 * changed: escape and sanitize more things
 * changed: tighten PHPCS rules used for pre-release testing

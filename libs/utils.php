@@ -206,26 +206,36 @@ function imsanity_resize_from_id( $id = 0 ) {
 			);
 		}
 
-		// Let folks filter the allowed mime-types for resizing.
-		$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $meta['file'] );
-		if ( is_string( $allowed_types ) ) {
-			$allowed_types = array( $allowed_types );
-		} elseif ( ! is_array( $allowed_types ) ) {
-			$allowed_types = array();
-		}
-		$ftype = imsanity_quick_mimetype( $meta['file'] );
-		if ( ! in_array( $ftype, $allowed_types, true ) ) {
-			/* translators: %s: File type of the image */
-			$msg = sprintf( esc_html__( '%1$s does not have an allowed file type (%2$s)', 'imsanity' ), $meta['file'], $ftype );
+		// $uploads = wp_upload_dir();
+		$oldpath = imsanity_attachment_path( $meta, $id, '', false );
+
+		if ( empty( $oldpath ) ) {
+			/* translators: %s: File-name of the image */
+			$msg = sprintf( esc_html__( 'Could not retrieve location of %s', 'imsanity' ), $meta['file'] );
 			return array(
 				'success' => false,
 				'message' => $msg,
 			);
 		}
 
-		$uploads = wp_upload_dir();
-		$oldpath = imsanity_attachment_path( $meta, $id, '', false );
-		if ( empty( $oldpath ) || ! is_writable( $oldpath ) ) {
+		// Let folks filter the allowed mime-types for resizing.
+		$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $oldpath );
+		if ( is_string( $allowed_types ) ) {
+			$allowed_types = array( $allowed_types );
+		} elseif ( ! is_array( $allowed_types ) ) {
+			$allowed_types = array();
+		}
+		$ftype = imsanity_quick_mimetype( $oldpath );
+		if ( ! in_array( $ftype, $allowed_types, true ) ) {
+			/* translators: %s: File type of the image */
+			$msg = sprintf( esc_html__( '%1$s does not have an allowed file type (%2$s)', 'imsanity' ), wp_basename( $oldpath ), $ftype );
+			return array(
+				'success' => false,
+				'message' => $msg,
+			);
+		}
+
+		if ( ! is_writable( $oldpath ) ) {
 			/* translators: %s: File-name of the image */
 			$msg = sprintf( esc_html__( '%s is not writable', 'imsanity' ), $meta['file'] );
 			return array(
