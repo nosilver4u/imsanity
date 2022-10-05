@@ -22,6 +22,7 @@ env:
 before_script:
   - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
   - phpenv config-rm xdebug.ini
+  - composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
   - composer global require wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer phpcompatibility/phpcompatibility-wp
 
 script:

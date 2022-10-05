@@ -14,10 +14,10 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Domain Path: /languages
-Version: 2.8.1
+Version: 2.8.2
 Requires at least: 5.5
 Requires PHP: 7.2
-Author URI: https://ewww.io/
+Author URI: https://ewww.io/about/
 License: GPLv3
 */
 
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.8.1' );
+define( 'IMSANITY_VERSION', '2.8.2' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
