@@ -151,19 +151,19 @@ function imsanity_get_source() {
  * @param int $source One of IMSANITY_SOURCE_POST | IMSANITY_SOURCE_LIBRARY | IMSANITY_SOURCE_OTHER.
  */
 function imsanity_get_max_width_height( $source ) {
-	$w = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
-	$h = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
+	$w = (int) imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
+	$h = (int) imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
 
 	switch ( $source ) {
 		case IMSANITY_SOURCE_POST:
 			break;
 		case IMSANITY_SOURCE_LIBRARY:
-			$w = imsanity_get_option( 'imsanity_max_width_library', $w );
-			$h = imsanity_get_option( 'imsanity_max_height_library', $h );
+			$w = (int) imsanity_get_option( 'imsanity_max_width_library', $w );
+			$h = (int) imsanity_get_option( 'imsanity_max_height_library', $h );
 			break;
 		default:
-			$w = imsanity_get_option( 'imsanity_max_width_other', $w );
-			$h = imsanity_get_option( 'imsanity_max_height_other', $h );
+			$w = (int) imsanity_get_option( 'imsanity_max_width_other', $w );
+			$h = (int) imsanity_get_option( 'imsanity_max_height_other', $h );
 			break;
 	}
 
@@ -226,6 +226,8 @@ function imsanity_handle_upload( $params ) {
 		if ( is_array( $max_width_height ) && 2 === count( $max_width_height ) ) {
 			list( $maxw, $maxh ) = $max_width_height;
 		}
+		$maxw = (int) $maxw;
+		$maxh = (int) $maxh;
 
 		list( $oldw, $oldh ) = getimagesize( $oldpath );
 

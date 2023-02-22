@@ -106,6 +106,9 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.8.3 =
+* fixed: PHP 8 error trying to do math with string values
+
 = 2.8.2 =
 * fixed: mime type error when filename in attachment metadata is incorrect
 
