@@ -47,7 +47,7 @@ function imsanity_create_menu() {
 function imsanity_register_network() {
 	if ( ! function_exists( 'is_plugin_active_for_network' ) && is_multisite() ) {
 		// Need to include the plugin library for the is_plugin_active function.
-		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 	if ( is_multisite() ) {
 		$permissions = apply_filters( 'imsanity_superadmin_permissions', 'manage_network_options' );
@@ -199,7 +199,7 @@ function imsanity_maybe_created_custom_table() {
 					  PRIMARY KEY (setting)
 					);';
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
 		// Add the rows to the database.
@@ -836,5 +836,4 @@ function imsanity_settings_page_form() {
 
 	</form>
 	<?php
-
 }

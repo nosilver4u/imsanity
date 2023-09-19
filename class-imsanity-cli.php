@@ -31,7 +31,7 @@ class Imsanity_CLI extends WP_CLI_Command {
 	 * @param array $args A numbered array of arguments provided via WP-CLI without option names.
 	 * @param array $assoc_args An array of named arguments provided via WP-CLI.
 	 */
-	function resize( $args, $assoc_args ) {
+	public function resize( $args, $assoc_args ) {
 
 		// let's get started, shall we?
 		// imsanity_init();.
@@ -71,7 +71,7 @@ class Imsanity_CLI extends WP_CLI_Command {
 		foreach ( $attachments as $id ) {
 			$imagew = false;
 			$imageh = false;
-			$images_finished++;
+			++$images_finished;
 
 			$path = get_attached_file( $id );
 			if ( $path ) {

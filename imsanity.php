@@ -15,8 +15,8 @@ Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Domain Path: /languages
 Version: 2.8.2
-Requires at least: 5.5
-Requires PHP: 7.2
+Requires at least: 6.0
+Requires PHP: 7.3
 Author URI: https://ewww.io/about/
 License: GPLv3
 */
@@ -65,12 +65,12 @@ function imsanity_init() {
 /**
  * Import supporting libraries.
  */
-require_once( plugin_dir_path( __FILE__ ) . 'libs/utils.php' );
-require_once( plugin_dir_path( __FILE__ ) . 'settings.php' );
-require_once( plugin_dir_path( __FILE__ ) . 'ajax.php' );
-require_once( plugin_dir_path( __FILE__ ) . 'media.php' );
+require_once plugin_dir_path( __FILE__ ) . 'libs/utils.php';
+require_once plugin_dir_path( __FILE__ ) . 'settings.php';
+require_once plugin_dir_path( __FILE__ ) . 'ajax.php';
+require_once plugin_dir_path( __FILE__ ) . 'media.php';
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once( plugin_dir_path( __FILE__ ) . 'class-imsanity-cli.php' );
+	require_once plugin_dir_path( __FILE__ ) . 'class-imsanity-cli.php';
 }
 
 /**

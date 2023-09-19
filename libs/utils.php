@@ -6,17 +6,6 @@
  */
 
 /**
- * Util function returns an array value, if not defined then returns default instead.
- *
- * @param array  $arr Any array.
- * @param string $key Any index from that array.
- * @param mixed  $default Whatever you want.
- */
-function imsanity_val( $arr, $key, $default = '' ) {
-	return isset( $arr[ $key ] ) ? $arr[ $key ] : $default;
-}
-
-/**
  * Retrieves the path of an attachment via the $id and the $meta.
  *
  * @param array  $meta The attachment metadata.
@@ -115,7 +104,7 @@ function imsanity_add_webp_support( $mimes ) {
  */
 function imsanity_get_orientation( $file, $type ) {
 	if ( function_exists( 'exif_read_data' ) && 'image/jpeg' === $type ) {
-		$exif = @exif_read_data( $file );
+		$exif = @exif_read_data( $file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		if ( is_array( $exif ) && array_key_exists( 'Orientation', $exif ) ) {
 			return (int) $exif['Orientation'];
 		}

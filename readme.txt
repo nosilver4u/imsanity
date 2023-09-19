@@ -2,9 +2,9 @@
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality, upload
-Requires at least: 5.5
-Tested up to: 6.1
-Requires PHP: 7.2
+Requires at least: 6.0
+Tested up to: 6.3
+Requires PHP: 7.3
 Stable tag: 2.8.2
 License: GPLv3
 
@@ -17,6 +17,8 @@ Automatically resize huge image uploads with Imsanity. Choose whatever size and 
 Imsanity also provides a bulk-resize feature to resize previously uploaded images and free up disk space. You may resize individual images from the Media Library's List View.
 
 This plugin is ideal for blogs that do not require hi-resolution original images to be stored and/or the contributors don't want (or understand how) to scale images before uploading.
+
+You may report security issues through our Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/imsanity)
 
 = Features =
 
@@ -107,6 +109,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 == Changelog ==
 
 = 2.8.3 =
+* changed: use updated WP coding standards
 * fixed: PHP 8 error trying to do math with string values
 
 = 2.8.2 =

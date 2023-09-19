@@ -1,6 +1,6 @@
 # Imsanity
-**Minimum WordPress:** 5.0
-**Minimum PHP:** 5.6
+**Minimum WordPress:** 6.0
+**Minimum PHP:** 7.3
 
 [![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
 [![WordPress Plugin Rating](https://img.shields.io/wordpress/plugin/r/imsanity.svg)](https://wordpress.org/support/plugin/imsanity/reviews/)
@@ -15,6 +15,8 @@ Automatically resize huge image uploads with Imsanity. Choose whatever size and 
 Imsanity also provides a bulk-resize feature to resize previously uploaded images and free up disk space. You may resize individual images from the Media Library's List View.
 
 This plugin is ideal for blogs that do not require hi-resolution original images to be stored and/or the contributors don't want (or understand how) to scale images before uploading.
+
+You may report security issues through our Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/imsanity)
 
 ### Features
 
