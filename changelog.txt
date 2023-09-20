@@ -1,3 +1,7 @@
+= 2.8.3 =
+* changed: use updated WP coding standards
+* fixed: PHP 8 error trying to do math with string values
+
 = 2.8.2 =
 * fixed: mime type error when filename in attachment metadata is incorrect
 
