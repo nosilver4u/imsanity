@@ -1,10 +1,10 @@
 === Imsanity ===
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
-Tags: image, scale, resize, space saver, quality, upload
-Requires at least: 6.0
-Tested up to: 6.3
-Requires PHP: 7.3
+Tags: image, scale, resize, space saver, quality
+Requires at least: 6.2
+Tested up to: 6.5
+Requires PHP: 7.4
 Stable tag: 2.8.3
 License: GPLv3
 
