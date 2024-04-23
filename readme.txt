@@ -8,7 +8,7 @@ Requires PHP: 7.4
 Stable tag: 2.8.3
 License: GPLv3
 
-Imsanity automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
+Automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
 
 == Description ==
 
