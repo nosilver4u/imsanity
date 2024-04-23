@@ -1,6 +1,6 @@
 # Imsanity
-**Minimum WordPress:** 6.0
-**Minimum PHP:** 7.3
+**Minimum WordPress:** 6.2
+**Minimum PHP:** 7.4
 
 [![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
 [![WordPress Plugin Rating](https://img.shields.io/wordpress/plugin/r/imsanity.svg)](https://wordpress.org/support/plugin/imsanity/reviews/)
