@@ -5,7 +5,7 @@ Tags: image, scale, resize, space saver, quality
 Requires at least: 6.2
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.8.3
+Stable tag: 2.8.4
 License: GPLv3
 
 Automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
@@ -107,6 +107,9 @@ Imsanity is short for "Image Sanity Limit". A sanity limit is a term for limitin
 Questions may be posted on the support forum at https://wordpress.org/support/plugin/imsanity but if you don't get an answer, please use https://ewww.io/contact-us/.
 
 == Changelog ==
+
+= 2.8.4 =
+* bumped WP tested version and PHP minimum
 
 = 2.8.3 =
 * changed: use updated WP coding standards
