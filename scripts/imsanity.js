@@ -15,13 +15,12 @@ jQuery(document).on('click', '.imsanity-manual-resize', function() {
 		function(response) {
 			var target = jQuery('#imsanity-media-status-' + post_id );
 			try {
-				var result = JSON.parse(response);
-				target.html(result['message']);
+				target.html(response.message);
 			} catch(e) {
 				target.html(imsanity_vars.invalid_response);
 				if (console) {
 					console.warn(post_id + ': '+ e.message);
-					console.warn('Invalid JSON Response: ' + response);
+					console.warn('Invalid JSON Response: ' + JSON.stringify(response));
 				}
 			}
 		}
@@ -40,8 +39,7 @@ jQuery(document).on('click', '.imsanity-manual-remove-original', function() {
 		function(response) {
 			var target = jQuery('#imsanity-media-status-' + post_id );
 			try {
-				var result = JSON.parse(response);
-				if (! result['success']) {
+				if (! response.success) {
 					target.html(imsanity_vars.removal_failed);
 				} else {
 					target.html(imsanity_vars.removal_succeeded);
@@ -50,7 +48,7 @@ jQuery(document).on('click', '.imsanity-manual-remove-original', function() {
 				target.html(imsanity_vars.invalid_response);
 				if (console) {
 					console.warn(post_id + ': '+ e.message);
-					console.warn('Invalid JSON Response: ' + response);
+					console.warn('Invalid JSON Response: ' + JSON.stringify(response));
 				}
 			}
 		}
@@ -92,13 +90,12 @@ function imsanity_resize_next(next_index) {
 			jQuery('#bulk-resize-beginning').hide();
 
 			try {
-				result = JSON.parse(response);
-				target.append('<div>' + (next_index+1) + '/' + total_images + ' &gt;&gt; ' + result['message'] +'</div>');
+				target.append('<div>' + (next_index+1) + '/' + total_images + ' &gt;&gt; ' + response.message +'</div>');
 			} catch(e) {
 				target.append('<div>' + imsanity_vars.invalid_response + '</div>');
 				if (console) {
 					console.warn(imsanity_vars.attachments[next_index] + ': '+ e.message);
-					console.warn('Invalid JSON Response: ' + response);
+					console.warn('Invalid JSON Response: ' + JSON.stringify(response));
 				}
 			}
 			// recurse
@@ -140,13 +137,8 @@ function imsanity_load_images() {
 		ajaxurl, // (global defined by wordpress - points to admin-ajax.php)
 		{_wpnonce: imsanity_vars._wpnonce, action: 'imsanity_get_images', resume_id: imsanity_vars.resume_id},
 		function(response) {
-			var is_json = true;
-			try {
-				var images = JSON.parse(response);
-			} catch ( err ) {
-				is_json = false;
-			}
-			if ( ! is_json ) {
+			var images = response;
+			if (! Array.isArray(images)) {
 				console.log( response );
 				return false;
 			}

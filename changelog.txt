@@ -1,3 +1,7 @@
+= 2.8.5 =
+* bumped WP tested version
+* changed: improve JSON handling/efficiency
+
 = 2.8.4 =
 * bumped WP tested version and PHP minimum
 

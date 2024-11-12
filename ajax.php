@@ -16,22 +16,18 @@ add_action( 'wp_ajax_imsanity_bulk_complete', 'imsanity_ajax_finish' );
  */
 function imsanity_get_images() {
 	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
 			)
 		);
 	}
 	if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-bulk' ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-manual-resize' ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
 			)
 		);
 	}
@@ -41,7 +37,7 @@ function imsanity_get_images() {
 	// Load up all the image attachments we can find.
 	$attachments = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID < %d AND post_type = 'attachment' AND post_mime_type LIKE %s ORDER BY ID DESC", $resume_id, '%%image%%' ) );
 	array_walk( $attachments, 'intval' );
-	die( wp_json_encode( $attachments ) );
+	wp_send_json( $attachments );
 }
 
 /**
@@ -50,34 +46,28 @@ function imsanity_get_images() {
  */
 function imsanity_ajax_resize() {
 	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
 			)
 		);
 	}
 	if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-bulk' ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-manual-resize' ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
 			)
 		);
 	}
 
 	$id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : 0;
 	if ( ! $id ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Missing ID Parameter', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Missing ID Parameter', 'imsanity' ),
 			)
 		);
 	}
@@ -87,7 +77,7 @@ function imsanity_ajax_resize() {
 		sleep( 1 );
 	}
 
-	die( wp_json_encode( $results ) );
+	wp_send_json( $results );
 }
 
 /**
@@ -96,44 +86,38 @@ function imsanity_ajax_resize() {
  */
 function imsanity_ajax_remove_original() {
 	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
 			)
 		);
 	}
 	if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-bulk' ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-manual-resize' ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
 			)
 		);
 	}
 
 	$id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : 0;
 	if ( ! $id ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Missing ID Parameter', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Missing ID Parameter', 'imsanity' ),
 			)
 		);
 	}
 	$remove_original = imsanity_remove_original_image( $id );
 	if ( $remove_original && is_array( $remove_original ) ) {
 		wp_update_attachment_metadata( $id, $remove_original );
-		die( wp_json_encode( array( 'success' => true ) ) );
+		wp_send_json( array( 'success' => true ) );
 	}
 
-	die( wp_json_encode( array( 'success' => false ) ) );
+	wp_send_json( array( 'success' => false ) );
 }
 
 /**
@@ -141,22 +125,18 @@ function imsanity_ajax_remove_original() {
  */
 function imsanity_ajax_finish() {
 	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
 			)
 		);
 	}
 	if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-bulk' ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'imsanity-manual-resize' ) ) {
-		die(
-			wp_json_encode(
-				array(
-					'success' => false,
-					'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
-				)
+		wp_send_json(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Access token has expired, please reload the page.', 'imsanity' ),
 			)
 		);
 	}

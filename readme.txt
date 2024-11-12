@@ -2,10 +2,10 @@
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality
-Requires at least: 6.2
-Tested up to: 6.5
+Requires at least: 6.4
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 License: GPLv3
 
 Automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
@@ -107,6 +107,10 @@ Imsanity is short for "Image Sanity Limit". A sanity limit is a term for limitin
 Questions may be posted on the support forum at https://wordpress.org/support/plugin/imsanity but if you don't get an answer, please use https://ewww.io/contact-us/.
 
 == Changelog ==
+
+= 2.8.5 =
+* bumped WP tested version
+* changed: improve JSON handling/efficiency
 
 = 2.8.4 =
 * bumped WP tested version and PHP minimum
