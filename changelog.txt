@@ -1,3 +1,8 @@
+= 2.8.6 =
+*Release Date - November 26, 2024*
+
+* fixed: fatal error if other plugins run big_image_size_threshold filter with too few arguments
+
 = 2.8.5 =
 * bumped WP tested version
 * changed: improve JSON handling/efficiency
