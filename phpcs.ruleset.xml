@@ -9,7 +9,9 @@
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress.PHP.NoSilencedErrors">
 		<properties>
-			<property name="customAllowedFunctionsList" type="array" value="exif_read_data"/>
+			<property name="customAllowedFunctionsList" type="array">
+				<element value="exif_read_data"/>
+			</property>
 		</properties>
 	</rule>
 
