@@ -10,12 +10,18 @@ add_action( 'wp_ajax_imsanity_resize_image', 'imsanity_ajax_resize' );
 add_action( 'wp_ajax_imsanity_remove_original', 'imsanity_ajax_remove_original' );
 add_action( 'wp_ajax_imsanity_bulk_complete', 'imsanity_ajax_finish' );
 
+add_filter( 'imsanity_admin_permissions', function( $capability ) {
+    return 'edit_others_posts';
+
+		} );
+
 /**
  * Searches for up to 250 images that are candidates for resize and renders them
  * to the browser as a json array, then dies
  */
 function imsanity_get_images() {
-	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
+	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+	if ( ! current_user_can( $permissions ) || empty( $_REQUEST['_wpnonce'] ) ) {
 		wp_send_json(
 			array(
 				'success' => false,
@@ -45,7 +51,8 @@ function imsanity_get_images() {
  * renders a json response indicating success/failure and dies
  */
 function imsanity_ajax_resize() {
-	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
+	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+	if ( ! current_user_can( $permissions ) || empty( $_REQUEST['_wpnonce'] ) ) {
 		wp_send_json(
 			array(
 				'success' => false,
@@ -85,7 +92,8 @@ function imsanity_ajax_resize() {
  * renders a json response indicating success/failure and dies
  */
 function imsanity_ajax_remove_original() {
-	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
+	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+	if ( ! current_user_can( $permissions ) || empty( $_REQUEST['_wpnonce'] ) ) {
 		wp_send_json(
 			array(
 				'success' => false,
@@ -124,7 +132,8 @@ function imsanity_ajax_remove_original() {
  * Finalizes the resizing process.
  */
 function imsanity_ajax_finish() {
-	if ( ! current_user_can( 'activate_plugins' ) || empty( $_REQUEST['_wpnonce'] ) ) {
+	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+	if ( ! current_user_can( $permissions ) || empty( $_REQUEST['_wpnonce'] ) ) {
 		wp_send_json(
 			array(
 				'success' => false,
