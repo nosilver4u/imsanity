@@ -96,10 +96,11 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 		}
 		echo '<div>' . (int) $imagew . 'w x ' . (int) $imageh . 'h</div>';
 
-		$maxw = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
-		$maxh = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
+		$maxw        = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
+		$maxh        = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
+		$permissions = apply_filters( 'imsanity_editor_permissions', 'edit_others_posts' );
 		if ( $imagew > $maxw || $imageh > $maxh ) {
-			if ( current_user_can( 'activate_plugins' ) ) {
+			if ( current_user_can( $permissions ) ) {
 				$manual_nonce = wp_create_nonce( 'imsanity-manual-resize' );
 				// Give the user the option to optimize the image right now.
 				printf(
@@ -109,7 +110,7 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 					esc_html__( 'Resize Image', 'imsanity' )
 				);
 			}
-		} elseif ( current_user_can( 'activate_plugins' ) && imsanity_get_option( 'imsanity_delete_originals', false ) && ! empty( $meta['original_image'] ) && function_exists( 'wp_get_original_image_path' ) ) {
+		} elseif ( current_user_can( $permissions ) && imsanity_get_option( 'imsanity_delete_originals', false ) && ! empty( $meta['original_image'] ) && function_exists( 'wp_get_original_image_path' ) ) {
 			$original_image = wp_get_original_image_path( $id );
 			if ( empty( $original_image ) || ! is_file( $original_image ) ) {
 				$original_image = wp_get_original_image_path( $id, true );
