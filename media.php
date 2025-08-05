@@ -96,9 +96,9 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 		}
 		echo '<div>' . (int) $imagew . 'w x ' . (int) $imageh . 'h</div>';
 
-		$maxw = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
-		$maxh = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
-		$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+		$maxw        = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
+		$maxh        = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
+		$permissions = apply_filters( 'imsanity_editor_permissions', 'edit_others_posts' );
 		if ( $imagew > $maxw || $imageh > $maxh ) {
 			if ( current_user_can( $permissions ) ) {
 				$manual_nonce = wp_create_nonce( 'imsanity-manual-resize' );

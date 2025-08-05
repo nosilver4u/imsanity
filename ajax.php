@@ -10,14 +10,9 @@ add_action( 'wp_ajax_imsanity_resize_image', 'imsanity_ajax_resize' );
 add_action( 'wp_ajax_imsanity_remove_original', 'imsanity_ajax_remove_original' );
 add_action( 'wp_ajax_imsanity_bulk_complete', 'imsanity_ajax_finish' );
 
-add_filter( 'imsanity_admin_permissions', function( $capability ) {
-    return 'edit_others_posts';
-
-		} );
-
 /**
  * Searches for up to 250 images that are candidates for resize and renders them
- * to the browser as a json array, then dies
+ * to the browser as a json array, then dies.
  */
 function imsanity_get_images() {
 	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
@@ -48,15 +43,15 @@ function imsanity_get_images() {
 
 /**
  * Resizes the image with the given id according to the configured max width and height settings
- * renders a json response indicating success/failure and dies
+ * renders a json response indicating success/failure and dies.
  */
 function imsanity_ajax_resize() {
-	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+	$permissions = apply_filters( 'imsanity_editor_permissions', 'edit_others_posts' );
 	if ( ! current_user_can( $permissions ) || empty( $_REQUEST['_wpnonce'] ) ) {
 		wp_send_json(
 			array(
 				'success' => false,
-				'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
+				'message' => esc_html__( 'Editor permission is required', 'imsanity' ),
 			)
 		);
 	}
@@ -88,16 +83,15 @@ function imsanity_ajax_resize() {
 }
 
 /**
- * Resizes the image with the given id according to the configured max width and height settings
- * renders a json response indicating success/failure and dies
+ * Removes the original image with the given id and renders a json response indicating success/failure and dies.
  */
 function imsanity_ajax_remove_original() {
-	$permissions = apply_filters( 'imsanity_admin_permissions', 'manage_options' );
+	$permissions = apply_filters( 'imsanity_editor_permissions', 'edit_others_posts' );
 	if ( ! current_user_can( $permissions ) || empty( $_REQUEST['_wpnonce'] ) ) {
 		wp_send_json(
 			array(
 				'success' => false,
-				'message' => esc_html__( 'Administrator permission is required', 'imsanity' ),
+				'message' => esc_html__( 'Editor permission is required', 'imsanity' ),
 			)
 		);
 	}
