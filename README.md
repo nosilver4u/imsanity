@@ -4,7 +4,7 @@
 [![WordPress Plugin Rating](https://img.shields.io/wordpress/plugin/r/imsanity.svg)](https://wordpress.org/support/plugin/imsanity/reviews/)
 [![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
 [![WordPress Tested Up To](https://img.shields.io/wordpress/v/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
-[![Required WP Version](https://img.shields.io/wordpress/plugin/wp-version/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
+[![Required WP Version](https://img.shields.io/wordpress/plugin/wp-version/imsanity.svg?label=wordpress%20%3E%3D)](https://wordpress.org/plugins/imsanity/)
 [![Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/imsanity.svg)](https://wordpress.org/plugins/imsanity/)
 [![GNU General Public License 3.0](https://img.shields.io/github/license/nosilver4u/imsanity.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
