@@ -69,11 +69,32 @@ function imsanity_quick_mimetype( $path ) {
 			return 'image/gif';
 		case 'pdf':
 			return 'application/pdf';
+		case 'avif':
+			return 'image/avif';
 		case 'webp':
 			return 'image/webp';
 		default:
 			return false;
 	}
+}
+
+/**
+ * Check for AVIF support in the image editor and add to the list of allowed mimes.
+ *
+ * @param array $mimes A list of allowed mime types.
+ * @return array The updated list of mimes after checking AVIF support.
+ */
+function imsanity_add_avif_support( $mimes ) {
+	if ( ! in_array( 'image/avif', $mimes, true ) ) {
+		if ( class_exists( 'Imagick' ) ) {
+			$imagick = new Imagick();
+			$formats = $imagick->queryFormats();
+			if ( in_array( 'AVIF', $formats, true ) ) {
+				$mimes[] = 'image/avif';
+			}
+		}
+	}
+	return $mimes;
 }
 
 /**
@@ -133,10 +154,18 @@ function imsanity_has_alpha( $filename ) {
 		return true;
 	} elseif ( imsanity_gd_support() ) {
 		$image = imagecreatefrompng( $filename );
+		if ( ! $image ) {
+			return false;
+		}
 		if ( imagecolortransparent( $image ) >= 0 ) {
 			return true;
 		}
-		list( $width, $height ) = getimagesize( $filename );
+		$image_size = getimagesize( $filename );
+		if ( empty( $image_size[0] ) || empty( $image_size[1] ) ) {
+			return false;
+		}
+		$width  = (int) $image_size[0];
+		$height = (int) $image_size[1];
 		for ( $y = 0; $y < $height; $y++ ) {
 			for ( $x = 0; $x < $width; $x++ ) {
 				$color = imagecolorat( $image, $x, $y );
@@ -254,7 +283,6 @@ function imsanity_resize_from_id( $id = 0 ) {
 		}
 
 		if ( ( $oldw > $maxw && $maxw > 0 ) || ( $oldh > $maxh && $maxh > 0 ) ) {
-			$quality = imsanity_get_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY );
 
 			if ( $maxw > 0 && $maxh > 0 && $oldw >= $maxw && $oldh >= $maxh && ( $oldh > $maxh || $oldw > $maxw ) && apply_filters( 'imsanity_crop_image', false ) ) {
 				$neww = $maxw;
@@ -268,7 +296,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 				$source_image = path_join( dirname( $oldpath ), $meta['original_image'] );
 				imsanity_debug( "subbing in $source_image for resizing" );
 			}
-			$resizeresult = imsanity_image_resize( $source_image, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
+			$resizeresult = imsanity_image_resize( $source_image, $neww, $newh, apply_filters( 'imsanity_crop_image', false ) );
 
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
 				$newpath = $resizeresult;
@@ -440,10 +468,9 @@ function imsanity_remove_original_image( $id, $meta = null ) {
  * @param bool   $crop Optional. Whether to crop image or resize.
  * @param string $suffix Optional. File suffix.
  * @param string $dest_path Optional. New image file path.
- * @param int    $jpeg_quality Optional, default is 82. Image quality level (1-100).
  * @return mixed WP_Error on failure. String with new destination path.
  */
-function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null, $jpeg_quality = 82 ) {
+function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null ) {
 	if ( function_exists( 'wp_get_image_editor' ) ) {
 		imsanity_debug( "resizing $file" );
 		$editor = wp_get_image_editor( $file );
@@ -451,12 +478,14 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 			return $editor;
 		}
 
-		$ftype = imsanity_quick_mimetype( $file );
+		// Default is 82 for JPG, can be anything from 1-100, though the extremes are kind of, well, extreme...
+		$quality = imsanity_jpg_quality();
+		$ftype   = imsanity_quick_mimetype( $file );
 		if ( 'image/webp' === $ftype ) {
-			$jpeg_quality = (int) round( $jpeg_quality * .91 );
+			$quality = imsanity_webp_quality();
+		} elseif ( 'image/avif' === $ftype ) {
+			$quality = imsanity_avif_quality();
 		}
-
-		$editor->set_quality( min( 92, $jpeg_quality ) );
 
 		// Return 1 to override auto-rotate.
 		$orientation = (int) apply_filters( 'imsanity_orientation', imsanity_get_orientation( $file, $ftype ) );
@@ -484,6 +513,8 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 		if ( file_exists( $dest_file ) ) {
 			$dest_file = $editor->generate_filename( 'TMP', $dest_path );
 		}
+
+		$editor->set_quality( min( 92, $quality ) );
 
 		$saved = $editor->save( $dest_file );
 

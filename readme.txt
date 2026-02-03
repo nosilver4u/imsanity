@@ -2,7 +2,7 @@
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: 2.8.7
 License: GPLv3
 
@@ -105,6 +105,15 @@ Imsanity is short for "Image Sanity Limit". A sanity limit is a term for limitin
 Questions may be posted on the support forum at https://wordpress.org/support/plugin/imsanity but if you don't get an answer, please use https://ewww.io/contact-us/.
 
 == Changelog ==
+
+= 2.9.0 =
+*Release Date - TBD*
+
+* added: support for resizing AVIF image uploads
+* added: settings for WebP and AVIF quality
+* added: PHP 8.5 compatibility
+* fixed: quality settings not applied
+* fixed: PNG alpha detection may throw errors if PHP GD cannot obtain information from a PNG image
 
 = 2.8.7 =
 *Release Date = August 6, 2024*

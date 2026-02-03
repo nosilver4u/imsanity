@@ -14,8 +14,8 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Domain Path: /languages
-Version: 2.8.7
-Requires at least: 6.5
+Version: 2.8.7.1
+Requires at least: 6.6
 Requires PHP: 7.4
 Author URI: https://ewww.io/about/
 License: GPLv3
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.8.7' );
+define( 'IMSANITY_VERSION', '2.8.7.1' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_DEFAULT_MAX_WIDTH', 1920 );
@@ -33,6 +33,8 @@ define( 'IMSANITY_DEFAULT_MAX_HEIGHT', 1920 );
 define( 'IMSANITY_DEFAULT_BMP_TO_JPG', true );
 define( 'IMSANITY_DEFAULT_PNG_TO_JPG', false );
 define( 'IMSANITY_DEFAULT_QUALITY', 82 );
+define( 'IMSANITY_DEFAULT_AVIF_QUALITY', 86 );
+define( 'IMSANITY_DEFAULT_WEBP_QUALITY', 86 );
 
 define( 'IMSANITY_SOURCE_POST', 1 );
 define( 'IMSANITY_SOURCE_LIBRARY', 2 );
@@ -228,7 +230,6 @@ function imsanity_handle_upload( $params ) {
 		list( $oldw, $oldh ) = getimagesize( $oldpath );
 
 		if ( ( $oldw > $maxw + 1 && $maxw > 0 ) || ( $oldh > $maxh + 1 && $maxh > 0 ) ) {
-			$quality = imsanity_get_option( 'imsanity_quality', IMSANITY_DEFAULT_QUALITY );
 
 			$ftype       = imsanity_quick_mimetype( $oldpath );
 			$orientation = imsanity_get_orientation( $oldpath, $ftype );
@@ -252,7 +253,7 @@ function imsanity_handle_upload( $params ) {
 			}
 			$original_preempt    = $ewww_preempt_editor;
 			$ewww_preempt_editor = true;
-			$resizeresult        = imsanity_image_resize( $oldpath, $neww, $newh, apply_filters( 'imsanity_crop_image', false ), null, null, $quality );
+			$resizeresult        = imsanity_image_resize( $oldpath, $neww, $newh, apply_filters( 'imsanity_crop_image', false ) );
 			$ewww_preempt_editor = $original_preempt;
 
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
@@ -371,5 +372,7 @@ add_action( 'plugins_loaded', 'imsanity_init' );
 add_filter( 'manage_media_columns', 'imsanity_media_columns' );
 // Outputs the actual column information for each attachment.
 add_action( 'manage_media_custom_column', 'imsanity_custom_column', 10, 2 );
+// Checks for AVIF support and adds it to the allowed mime types.
+add_filter( 'imsanity_allowed_mimes', 'imsanity_add_avif_support' );
 // Checks for WebP support and adds it to the allowed mime types.
 add_filter( 'imsanity_allowed_mimes', 'imsanity_add_webp_support' );

@@ -171,6 +171,8 @@ function imsanity_get_default_multisite_settings() {
 	$data->imsanity_bmp_to_jpg         = IMSANITY_DEFAULT_BMP_TO_JPG;
 	$data->imsanity_png_to_jpg         = IMSANITY_DEFAULT_PNG_TO_JPG;
 	$data->imsanity_quality            = IMSANITY_DEFAULT_QUALITY;
+	$data->imsanity_avif_quality       = IMSANITY_DEFAULT_AVIF_QUALITY;
+	$data->imsanity_webp_quality       = IMSANITY_DEFAULT_WEBP_QUALITY;
 	$data->imsanity_delete_originals   = false;
 	return $data;
 }
@@ -317,11 +319,37 @@ function imsanity_network_settings() {
 		</tr>
 		<tr>
 			<th scope="row">
+				<label for='imsanity_avif_quality'><?php esc_html_e( 'AVIF image quality', 'imsanity' ); ?>
+			</th>
+			<td>
+				<input type='text' id='imsanity_avif_quality' name='imsanity_avif_quality' class='small-text' value='<?php echo (int) $settings->imsanity_avif_quality; ?>' />
+				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
+				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for='imsanity_webp_quality'><?php esc_html_e( 'WebP image quality', 'imsanity' ); ?>
+			</th>
+			<td>
+				<input type='text' id='imsanity_webp_quality' name='imsanity_webp_quality' class='small-text' value='<?php echo (int) $settings->imsanity_webp_quality; ?>' />
+				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
+				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
 				<label for"imsanity_bmp_to_jpg"><?php esc_html_e( 'Convert BMP to JPG', 'imsanity' ); ?></label>
 			</th>
 			<td>
 				<input type="checkbox" id="imsanity_bmp_to_jpg" name="imsanity_bmp_to_jpg" value="true" <?php checked( $settings->imsanity_bmp_to_jpg ); ?> />
-				<?php esc_html_e( 'Only applies to new image uploads, existing BMP images cannot be converted or resized.', 'imsanity' ); ?>
+				<?php
+				printf(
+					/* translators: %s: link to install EWWW Image Optimizer plugin */
+					esc_html__( 'Only applies to new image uploads, existing images may be converted with %s.', 'imsanity' ),
+					'<a href="' . esc_url( admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) ) . '">EWWW Image Optimizer</a>'
+				);
+				?>
 			</td>
 		</tr>
 		<tr>
@@ -386,9 +414,11 @@ function imsanity_network_settings_update() {
 	$data->imsanity_bmp_to_jpg         = ! empty( $_POST['imsanity_bmp_to_jpg'] );
 	$data->imsanity_png_to_jpg         = ! empty( $_POST['imsanity_png_to_jpg'] );
 	$data->imsanity_quality            = isset( $_POST['imsanity_quality'] ) ? imsanity_jpg_quality( intval( $_POST['imsanity_quality'] ) ) : 82;
+	$data->imsanity_avif_quality       = isset( $_POST['imsanity_avif_quality'] ) ? imsanity_avif_quality( intval( $_POST['imsanity_avif_quality'] ) ) : 86;
+	$data->imsanity_webp_quality       = isset( $_POST['imsanity_webp_quality'] ) ? imsanity_webp_quality( intval( $_POST['imsanity_webp_quality'] ) ) : 86;
 	$data->imsanity_delete_originals   = ! empty( $_POST['imsanity_delete_originals'] );
 
-	$success = $wpdb->update(
+	$wpdb->update(
 		$wpdb->imsanity_ms,
 		array( 'data' => maybe_serialize( $data ) ),
 		array( 'setting' => 'multisite' )
@@ -500,6 +530,8 @@ function imsanity_set_defaults() {
 	add_option( 'imsanity_bmp_to_jpg', $settings->imsanity_bmp_to_jpg, '', false );
 	add_option( 'imsanity_png_to_jpg', $settings->imsanity_png_to_jpg, '', false );
 	add_option( 'imsanity_quality', $settings->imsanity_quality, '', false );
+	add_option( 'imsanity_avif_quality', $settings->imsanity_avif_quality, '', false );
+	add_option( 'imsanity_webp_quality', $settings->imsanity_webp_quality, '', false );
 	add_option( 'imsanity_delete_originals', $settings->imsanity_delete_originals, '', false );
 	if ( ! get_option( 'imsanity_version' ) ) {
 		global $wpdb;
@@ -527,6 +559,8 @@ function imsanity_register_settings() {
 	register_setting( 'imsanity-settings-group', 'imsanity_bmp_to_jpg', 'boolval' );
 	register_setting( 'imsanity-settings-group', 'imsanity_png_to_jpg', 'boolval' );
 	register_setting( 'imsanity-settings-group', 'imsanity_quality', 'imsanity_jpg_quality' );
+	register_setting( 'imsanity-settings-group', 'imsanity_avif_quality', 'imsanity_avif_quality' );
+	register_setting( 'imsanity-settings-group', 'imsanity_webp_quality', 'imsanity_webp_quality' );
 	register_setting( 'imsanity-settings-group', 'imsanity_delete_originals', 'boolval' );
 }
 
@@ -544,6 +578,40 @@ function imsanity_jpg_quality( $quality = null ) {
 		return (int) $quality;
 	} else {
 		return IMSANITY_DEFAULT_QUALITY;
+	}
+}
+
+/**
+ * Validate and return the AVIF quality setting.
+ *
+ * @param int $quality The AVIF quality currently set.
+ * @return int The (potentially) adjusted quality level.
+ */
+function imsanity_avif_quality( $quality = null ) {
+	if ( is_null( $quality ) ) {
+		$quality = get_option( 'imsanity_avif_quality' );
+	}
+	if ( preg_match( '/^(100|[1-9][0-9]?)$/', $quality ) ) {
+		return (int) $quality;
+	} else {
+		return IMSANITY_DEFAULT_AVIF_QUALITY;
+	}
+}
+
+/**
+ * Validate and return the WebP quality setting.
+ *
+ * @param int $quality The WebP quality currently set.
+ * @return int The (potentially) adjusted quality level.
+ */
+function imsanity_webp_quality( $quality = null ) {
+	if ( is_null( $quality ) ) {
+		$quality = get_option( 'imsanity_webp_quality' );
+	}
+	if ( preg_match( '/^(100|[1-9][0-9]?)$/', $quality ) ) {
+		return (int) $quality;
+	} else {
+		return IMSANITY_DEFAULT_WEBP_QUALITY;
 	}
 }
 
@@ -778,13 +846,12 @@ function imsanity_settings_page_form() {
 		</tr>
 
 		<tr>
-		<th scope="row"><?php esc_html_e( 'Images uploaded elsewhere (Theme headers, backgrounds, logos, etc)', 'imsanity' ); ?></th>
-		<td>
-			<label for="imsanity_max_width_other"><?php esc_html_e( 'Max Width', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_width_other" value="<?php echo (int) get_option( 'imsanity_max_width_other', IMSANITY_DEFAULT_MAX_WIDTH ); ?>" />
-			<label for="imsanity_max_height_other"><?php esc_html_e( 'Max Height', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_height_other" value="<?php echo (int) get_option( 'imsanity_max_height_other', IMSANITY_DEFAULT_MAX_HEIGHT ); ?>" /> <?php esc_html_e( 'in pixels, enter 0 to disable', 'imsanity' ); ?>
-		</td>
+			<th scope="row"><?php esc_html_e( 'Images uploaded elsewhere (Theme headers, backgrounds, logos, etc)', 'imsanity' ); ?></th>
+			<td>
+				<label for="imsanity_max_width_other"><?php esc_html_e( 'Max Width', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_width_other" value="<?php echo (int) get_option( 'imsanity_max_width_other', IMSANITY_DEFAULT_MAX_WIDTH ); ?>" />
+				<label for="imsanity_max_height_other"><?php esc_html_e( 'Max Height', 'imsanity' ); ?></label> <input type="number" step="1" min="0" class="small-text" name="imsanity_max_height_other" value="<?php echo (int) get_option( 'imsanity_max_height_other', IMSANITY_DEFAULT_MAX_HEIGHT ); ?>" /> <?php esc_html_e( 'in pixels, enter 0 to disable', 'imsanity' ); ?>
+			</td>
 		</tr>
-
 
 		<tr>
 			<th scope="row">
@@ -799,11 +866,39 @@ function imsanity_settings_page_form() {
 
 		<tr>
 			<th scope="row">
+				<label for='imsanity_avif_quality' ><?php esc_html_e( 'AVIF image quality', 'imsanity' ); ?>
+			</th>
+			<td>
+				<input type='text' id='imsanity_avif_quality' name='imsanity_avif_quality' class='small-text' value='<?php echo (int) imsanity_avif_quality(); ?>' />
+				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
+				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
+			</td>
+		</tr>
+
+		<tr>
+			<th scope="row">
+				<label for='imsanity_webp_quality' ><?php esc_html_e( 'WebP image quality', 'imsanity' ); ?>
+			</th>
+			<td>
+				<input type='text' id='imsanity_webp_quality' name='imsanity_webp_quality' class='small-text' value='<?php echo (int) imsanity_webp_quality(); ?>' />
+				<?php esc_html_e( 'Usable values are 1-92.', 'imsanity' ); ?>
+				<p class='description'><?php esc_html_e( 'Only used when resizing images, does not affect thumbnails.', 'imsanity' ); ?></p>
+			</td>
+		</tr>
+
+		<tr>
+			<th scope="row">
 				<label for="imsanity_bmp_to_jpg"><?php esc_html_e( 'Convert BMP To JPG', 'imsanity' ); ?></label>
 			</th>
 			<td>
 				<input type="checkbox" id="imsanity_bmp_to_jpg" name="imsanity_bmp_to_jpg" value="true" <?php checked( (bool) get_option( 'imsanity_bmp_to_jpg', IMSANITY_DEFAULT_BMP_TO_JPG ) ); ?> />
-				<?php esc_html_e( 'Only applies to new image uploads, existing BMP images cannot be converted or resized.', 'imsanity' ); ?>
+				<?php
+				printf(
+					/* translators: %s: link to install EWWW Image Optimizer plugin */
+					esc_html__( 'Only applies to new image uploads, existing images may be converted with %s.', 'imsanity' ),
+					'<a href="' . esc_url( admin_url( 'plugin-install.php?s=ewww+image+optimizer&tab=search&type=term' ) ) . '">EWWW Image Optimizer</a>'
+				);
+				?>
 			</td>
 		</tr>
 		<tr>
