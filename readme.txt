@@ -111,6 +111,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 * added: support for resizing AVIF image uploads
 * added: settings for WebP and AVIF quality
+* added: support for Modern Image Formats plugin
 * added: PHP 8.5 compatibility
 * fixed: quality settings not applied
 * fixed: PNG alpha detection may throw errors if PHP GD cannot obtain information from a PNG image

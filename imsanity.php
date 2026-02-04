@@ -176,6 +176,7 @@ function imsanity_get_max_width_height( $source ) {
  * @param Array $params The parameters submitted with the upload.
  */
 function imsanity_handle_upload( $params ) {
+	imsanity_debug( __FUNCTION__ );
 
 	// If "noresize" is included in the filename then we will bypass imsanity scaling.
 	if ( strpos( $params['file'], 'noresize' ) !== false ) {
@@ -257,18 +258,34 @@ function imsanity_handle_upload( $params ) {
 			$ewww_preempt_editor = $original_preempt;
 
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
-				$newpath = $resizeresult;
+				$newpath  = $resizeresult;
+				$new_type = $params['type'];
 
+				imsanity_debug( "checking $newpath to see if resize was successful" );
 				if ( is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
+					imsanity_debug( 'resized image is smaller, replacing original' );
 					// We saved some file space. remove original and replace with resized image.
+					$new_type = imsanity_mimetype( $newpath );
 					unlink( $oldpath );
 					rename( $newpath, $oldpath );
+					if ( $new_type && $new_type !== $params['type'] ) {
+						imsanity_debug( "mimetype changed from {$params['type']} to $new_type" );
+						$params['type'] = $new_type;
+						$params['file'] = imsanity_update_extension( $oldpath, $new_type );
+						if ( $params['file'] !== $oldpath ) {
+							rename( $oldpath, $params['file'] );
+						}
+						$params['url'] = imsanity_update_extension( $params['url'], $new_type );
+						imsanity_debug( "renamed file to match new extension: {$params['file']} / {$params['url']}" );
+					}
 				} elseif ( is_file( $newpath ) ) {
+					imsanity_debug( 'resized image is bigger, discarding' );
 					// The resized image is actually bigger in filesize (most likely due to jpg quality).
 					// Keep the old one and just get rid of the resized image.
 					unlink( $newpath );
 				}
 			} elseif ( false === $resizeresult ) {
+				imsanity_debug( 'resize returned false, unknown error' );
 				return $params;
 			} elseif ( is_wp_error( $resizeresult ) ) {
 				// resize didn't work, likely because the image processing libraries are missing.
@@ -284,7 +301,9 @@ function imsanity_handle_upload( $params ) {
 						'https://wordpress.org/support/plugin/imsanity'
 					)
 				);
+				imsanity_debug( 'resize result is wp_error, should have already output error to log' );
 			} else {
+				imsanity_debug( 'unknown resize result, inconceivable!' );
 				return $params;
 			}
 		}
@@ -304,6 +323,7 @@ function imsanity_handle_upload( $params ) {
  * @return array altered params
  */
 function imsanity_convert_to_jpg( $type, $params ) {
+	imsanity_debug( __FUNCTION__ );
 
 	if ( apply_filters( 'imsanity_disable_convert', false, $type, $params ) ) {
 		return $params;

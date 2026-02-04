@@ -51,6 +51,19 @@ function imsanity_attachment_path( $meta, $id, $file = '', $refresh_cache = true
 }
 
 /**
+ * Checks the filename for a protocal wrapper (like s3://).
+ *
+ * @param string $path The path of the file to check.
+ * @return bool True if the file contains :// indicating a stream wrapper.
+ */
+function imsanity_file_is_stream_wrapped( $path ) {
+	if ( false !== strpos( $path, '://' ) ) {
+		return true;
+	}
+	return false;
+}
+
+/**
  * Get mimetype based on file extension instead of file contents when speed outweighs accuracy.
  *
  * @param string $path The name of the file.
@@ -76,6 +89,117 @@ function imsanity_quick_mimetype( $path ) {
 		default:
 			return false;
 	}
+}
+
+/**
+ * Check the mimetype of the given file with magic mime strings/patterns.
+ *
+ * @param string $path The absolute path to the file.
+ * @return bool|string A valid mime-type or false.
+ */
+function imsanity_mimetype( $path ) {
+	imsanity_debug( "testing mimetype: $path" );
+	$type = false;
+	// For S3 images/files, don't attempt to read the file, just use the quick (filename) mime check.
+	if ( imsanity_file_is_stream_wrapped( $path ) ) {
+		return imsanity_quick_mimetype( $path );
+	}
+	$path = \realpath( $path );
+	if ( ! is_file( $path ) ) {
+		imsanity_debug( "$path is not a file, or out of bounds" );
+		return $type;
+	}
+	if ( ! is_readable( $path ) ) {
+		imsanity_debug( "$path is not readable" );
+		return $type;
+	}
+	$file_handle   = fopen( $path, 'rb' );
+	$file_contents = fread( $file_handle, 4096 );
+	if ( $file_contents ) {
+		// Read first 12 bytes, which equates to 24 hex characters.
+		$magic = bin2hex( substr( $file_contents, 0, 12 ) );
+		imsanity_debug( $magic );
+		if ( 8 === strpos( $magic, '6674797061766966' ) ) {
+			$type = 'image/avif';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( '424d' === substr( $magic, 0, 4 ) ) {
+			$type = 'image/bmp';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( 0 === strpos( $magic, '52494646' ) && 16 === strpos( $magic, '57454250' ) ) {
+			$type = 'image/webp';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( 'ffd8ff' === substr( $magic, 0, 6 ) ) {
+			$type = 'image/jpeg';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( '89504e470d0a1a0a' === substr( $magic, 0, 16 ) ) {
+			$type = 'image/png';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( '474946383761' === substr( $magic, 0, 12 ) || '474946383961' === substr( $magic, 0, 12 ) ) {
+			$type = 'image/gif';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( '25504446' === substr( $magic, 0, 8 ) ) {
+			$type = 'application/pdf';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		if ( preg_match( '/<svg/', $file_contents ) ) {
+			$type = 'image/svg+xml';
+			imsanity_debug( "imsanity type: $type" );
+			return $type;
+		}
+		imsanity_debug( "match not found for file: $magic" );
+	} else {
+		imsanity_debug( 'could not open for reading' );
+	}
+	return false;
+}
+
+/**
+ * Update the file extension based on the new mime type.
+ *
+ * @param string $path The path of the file to update.
+ * @param string $new_mime The new mime type.
+ * @return string The updated path with the new extension.
+ */
+function imsanity_update_extension( $path, $new_mime ) {
+	$extension = '';
+	switch ( $new_mime ) {
+		case 'image/jpeg':
+			$extension = 'jpg';
+			break;
+		case 'image/png':
+			$extension = 'png';
+			break;
+		case 'image/gif':
+			$extension = 'gif';
+			break;
+		case 'image/avif':
+			$extension = 'avif';
+			break;
+		case 'image/webp':
+			$extension = 'webp';
+			break;
+		default:
+			return $path;
+	}
+	$pathinfo = pathinfo( $path );
+	if ( empty( $pathinfo['dirname'] ) || empty( $pathinfo['filename'] ) ) {
+		return $path;
+	}
+	$new_name = trailingslashit( $pathinfo['dirname'] ) . $pathinfo['filename'] . '.' . $extension;
+	return $new_name;
 }
 
 /**
@@ -472,9 +596,14 @@ function imsanity_remove_original_image( $id, $meta = null ) {
  */
 function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null ) {
 	if ( function_exists( 'wp_get_image_editor' ) ) {
-		imsanity_debug( "resizing $file" );
+		imsanity_debug( "resizing $file to $max_w x $max_h" );
+		if ( $crop ) {
+			imsanity_debug( ' cropping enabled' );
+		}
+
 		$editor = wp_get_image_editor( $file );
 		if ( is_wp_error( $editor ) ) {
+			imsanity_debug( 'get editor error: ' . $editor->get_error_message() );
 			return $editor;
 		}
 
@@ -504,6 +633,7 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 
 		$resized = $editor->resize( $max_w, $max_h, $crop );
 		if ( is_wp_error( $resized ) ) {
+			imsanity_debug( 'resize error: ' . $resized->get_error_message() );
 			return $resized;
 		}
 
@@ -519,9 +649,14 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 		$saved = $editor->save( $dest_file );
 
 		if ( is_wp_error( $saved ) ) {
+			imsanity_debug( 'save error: ' . $saved->get_error_message() );
 			return $saved;
 		}
 
+		if ( ! empty( $saved['path'] ) && $saved['path'] !== $dest_file && is_file( $saved['path'] ) ) {
+			$dest_file = $saved['path'];
+		}
+		imsanity_debug( "resized image saved to $dest_file" );
 		return $dest_file;
 	}
 	return false;
