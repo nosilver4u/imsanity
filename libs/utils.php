@@ -264,6 +264,7 @@ function imsanity_get_orientation( $file, $type ) {
  * @return bool True if transparency is found.
  */
 function imsanity_has_alpha( $filename ) {
+	imsanity_debug( __FUNCTION__ );
 	if ( ! is_file( $filename ) ) {
 		return false;
 	}
@@ -275,17 +276,21 @@ function imsanity_has_alpha( $filename ) {
 	$color_type = ord( substr( $file_contents, 25, 1 ) );
 	// If we do not have GD and the PNG color type is RGB alpha or Grayscale alpha.
 	if ( ! imsanity_gd_support() && ( 4 === $color_type || 6 === $color_type ) ) {
+		imsanity_debug( "color type $color_type indicates alpha channel in $filename" );
 		return true;
 	} elseif ( imsanity_gd_support() ) {
 		$image = imagecreatefrompng( $filename );
 		if ( ! $image ) {
+			imsanity_debug( "could not create GD image from $filename" );
 			return false;
 		}
 		if ( imagecolortransparent( $image ) >= 0 ) {
+			imsanity_debug( "$filename has a transparent color" );
 			return true;
 		}
 		$image_size = getimagesize( $filename );
 		if ( empty( $image_size[0] ) || empty( $image_size[1] ) ) {
+			imsanity_debug( "invalid dimensions for $filename" );
 			return false;
 		}
 		$width  = (int) $image_size[0];
@@ -295,6 +300,7 @@ function imsanity_has_alpha( $filename ) {
 				$color = imagecolorat( $image, $x, $y );
 				$rgb   = imagecolorsforindex( $image, $color );
 				if ( $rgb['alpha'] > 0 ) {
+					imsanity_debug( "found alpha in $filename at pixel $x, $y" );
 					return true;
 				}
 			}
@@ -327,12 +333,14 @@ function imsanity_gd_support() {
  * @return array The success status (bool) and a message to display.
  */
 function imsanity_resize_from_id( $id = 0 ) {
+	imsanity_debug( __FUNCTION__ );
 
 	$id = (int) $id;
 
 	if ( ! $id ) {
 		return;
 	}
+	imsanity_debug( "attempting to resize attachment $id" );
 
 	$meta = wp_get_attachment_metadata( $id );
 
@@ -348,7 +356,6 @@ function imsanity_resize_from_id( $id = 0 ) {
 			);
 		}
 
-		// $uploads = wp_upload_dir();
 		$oldpath = imsanity_attachment_path( $meta, $id, '', false );
 
 		if ( empty( $oldpath ) ) {
@@ -420,13 +427,29 @@ function imsanity_resize_from_id( $id = 0 ) {
 				$source_image = path_join( dirname( $oldpath ), $meta['original_image'] );
 				imsanity_debug( "subbing in $source_image for resizing" );
 			}
+			remove_all_filters( 'image_editor_output_format' );
 			$resizeresult = imsanity_image_resize( $source_image, $neww, $newh, apply_filters( 'imsanity_crop_image', false ) );
 
 			if ( $resizeresult && ! is_wp_error( $resizeresult ) ) {
 				$newpath = $resizeresult;
 
-				if ( $newpath !== $oldpath && is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
+				$new_type = imsanity_mimetype( $newpath );
+				if ( $new_type && $new_type !== $ftype ) {
+					// The resized image is a different format,
+					// keep the old one and just get rid of the resized image.
+					imsanity_debug( "mime type changed from $ftype to $new_type, not allowed for existing images" );
+					if ( is_file( $newpath ) ) {
+						unlink( $newpath );
+					}
+					$results = array(
+						'success' => false,
+						'id'      => $id,
+						/* translators: 1: File-name of the image 2: the error message, translated elsewhere */
+						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], esc_html__( 'File format/mime type was changed', 'imsanity' ) ),
+					);
+				} elseif ( $newpath !== $oldpath && is_file( $newpath ) && filesize( $newpath ) < filesize( $oldpath ) ) {
 					// we saved some file space. remove original and replace with resized image.
+					imsanity_debug( "$newpath is smaller, hurrah!" );
 					unlink( $oldpath );
 					rename( $newpath, $oldpath );
 					$meta['width']  = $neww;
@@ -437,12 +460,13 @@ function imsanity_resize_from_id( $id = 0 ) {
 					$results = array(
 						'success' => true,
 						'id'      => $id,
-						/* translators: 1: File-name of the image */
+						/* translators: 1: File-name of the image 2: the image width in pixels 3: the image height in pixels */
 						'message' => sprintf( esc_html__( 'OK: %1$s resized to %2$s x %3$s', 'imsanity' ), $meta['file'], $neww . 'w', $newh . 'h' ),
 					);
 				} elseif ( $newpath !== $oldpath ) {
 					// the resized image is actually bigger in filesize (most likely due to jpg quality).
 					// keep the old one and just get rid of the resized image.
+					imsanity_debug( "$newpath is larger than $oldpath, bummer..." );
 					if ( is_file( $newpath ) ) {
 						unlink( $newpath );
 					}
@@ -453,6 +477,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 						'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], esc_html__( 'File size of resized image was larger than the original', 'imsanity' ) ),
 					);
 				} else {
+					imsanity_debug( "$newpath === $oldpath, strange?" );
 					$results = array(
 						'success' => false,
 						'id'      => $id,
@@ -461,6 +486,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 					);
 				}
 			} elseif ( false === $resizeresult ) {
+				imsanity_debug( 'wp_get_image_editor likely missing, no resize result, and no error' );
 				$results = array(
 					'success' => false,
 					'id'      => $id,
@@ -468,6 +494,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 					'message' => sprintf( esc_html__( 'ERROR: %1$s (%2$s)', 'imsanity' ), $meta['file'], esc_html__( 'wp_get_image_editor missing', 'imsanity' ) ),
 				);
 			} else {
+				imsanity_debug( 'image editor returned an error: ' . $resizeresult->get_error_message() );
 				$results = array(
 					'success' => false,
 					'id'      => $id,
@@ -476,6 +503,7 @@ function imsanity_resize_from_id( $id = 0 ) {
 				);
 			}
 		} else {
+			imsanity_debug( "$oldpath is already small enough: $oldw x $oldh" );
 			$results = array(
 				'success' => true,
 				'id'      => $id,
@@ -557,6 +585,7 @@ function imsanity_get_original_image_path( $id, $image_file = '', $meta = null )
  * @return bool|array Returns meta if modified, false otherwise (even if an "unlinked" original is removed).
  */
 function imsanity_remove_original_image( $id, $meta = null ) {
+	imsanity_debug( __FUNCTION__ );
 	$id = (int) $id;
 	if ( empty( $id ) ) {
 		return false;
@@ -571,14 +600,23 @@ function imsanity_remove_original_image( $id, $meta = null ) {
 		! empty( $meta['original_image'] ) && function_exists( 'wp_get_original_image_path' )
 	) {
 		$original_image = imsanity_get_original_image_path( $id, '', $meta );
+		imsanity_debug( "attempting to remove original image at $original_image" );
 		if ( $original_image && is_file( $original_image ) && is_writable( $original_image ) ) {
+			imsanity_debug( 'original is writable, unlinking!' );
 			unlink( $original_image );
 		}
 		clearstatcache();
 		if ( empty( $original_image ) || ! is_file( $original_image ) ) {
+			imsanity_debug( 'removal successful, updating meta' );
 			unset( $meta['original_image'] );
 			return $meta;
 		}
+	} elseif ( empty( $meta['original_image'] ) ) {
+		imsanity_debug( 'no original_image meta found, nothing to remove' );
+	} elseif ( ! imsanity_get_option( 'imsanity_delete_originals', false ) ) {
+		imsanity_debug( 'delete_originals option not enabled, not removing' );
+	} elseif ( ! function_exists( 'wp_get_original_image_path' ) ) {
+		imsanity_debug( 'wp_get_original_image_path function does not exist, cannot remove' );
 	}
 	return false;
 }
@@ -595,6 +633,8 @@ function imsanity_remove_original_image( $id, $meta = null ) {
  * @return mixed WP_Error on failure. String with new destination path.
  */
 function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null ) {
+	imsanity_debug( __FUNCTION__ );
+
 	if ( function_exists( 'wp_get_image_editor' ) ) {
 		imsanity_debug( "resizing $file to $max_w x $max_h" );
 		if ( $crop ) {
@@ -621,12 +661,15 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 		// Try to correct for auto-rotation if the info is available.
 		switch ( $orientation ) {
 			case 3:
+				imsanity_debug( 'rotating 180' );
 				$editor->rotate( 180 );
 				break;
 			case 6:
+				imsanity_debug( 'rotating -90' );
 				$editor->rotate( -90 );
 				break;
 			case 8:
+				imsanity_debug( 'rotating 90' );
 				$editor->rotate( 90 );
 				break;
 		}
@@ -643,10 +686,22 @@ function imsanity_image_resize( $file, $max_w, $max_h, $crop = false, $suffix = 
 		if ( file_exists( $dest_file ) ) {
 			$dest_file = $editor->generate_filename( 'TMP', $dest_path );
 		}
+		imsanity_debug( "saving resized image to $dest_file with quality $quality" );
 
 		$editor->set_quality( min( 92, $quality ) );
 
-		$saved = $editor->save( $dest_file );
+		// If Modern Image Formats is active, but fallback option is disabled, IMSANITY_ALLOW_CONVERSION will be set to allow AVIF/WebP conversion.
+		// Otherwise don't allow conversion by any plugin at this stage--MIF will do it later during thumbnail generation.
+		if ( defined( 'IMSANITY_ALLOW_CONVERSION' ) && IMSANITY_ALLOW_CONVERSION ) {
+			imsanity_debug( 'Modern Image Formats detected, but no fallback option, conversion allowed' );
+			add_filter( 'wp_editor_set_quality', 'imsanity_editor_quality', 11, 2 );
+			$saved = $editor->save( $dest_file );
+			remove_filter( 'wp_editor_set_quality', 'imsanity_editor_quality', 11 );
+		} else {
+			imsanity_debug( "passing mime type $ftype to prevent conversion by Modern Image Formats (or any other plugin)" );
+			remove_all_filters( 'image_editor_output_format' );
+			$saved = $editor->save( $dest_file, $ftype );
+		}
 
 		if ( is_wp_error( $saved ) ) {
 			imsanity_debug( 'save error: ' . $saved->get_error_message() );

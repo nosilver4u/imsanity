@@ -36,7 +36,7 @@ function imsanity_create_menu() {
 		esc_html__( 'Imsanity Plugin Settings', 'imsanity' ), // Page Title.
 		esc_html__( 'Imsanity', 'imsanity' ),                 // Menu Title.
 		$permissions,                                         // Required permissions.
-		IMSANITY_PLUGIN_FILE_REL,                             // Slug.
+		'imsanity-options',                                   // Slug.
 		'imsanity_settings_page'                              // Function to call.
 	);
 }
@@ -56,10 +56,22 @@ function imsanity_register_network() {
 			esc_html__( 'Imsanity Network Settings', 'imsanity' ),
 			esc_html__( 'Imsanity', 'imsanity' ),
 			$permissions,
-			IMSANITY_PLUGIN_FILE_REL,
+			'imsanity-options',
 			'imsanity_network_settings'
 		);
 	}
+}
+
+/**
+ * Get the settings link, based on whether we are in a multi-site network admin or not.
+ *
+ * @return string The URL for the settings page.
+ */
+function imsanity_get_settings_link() {
+	if ( is_multisite() && is_network_admin() ) {
+		return network_admin_url( 'settings.php?page=imsanity-options' );
+	}
+	return admin_url( 'options-general.php?page=imsanity-options' );
 }
 
 /**
@@ -73,9 +85,9 @@ function imsanity_settings_link( $links ) {
 		$links = array();
 	}
 	if ( is_multisite() && is_network_admin() ) {
-		$settings_link = '<a href="' . network_admin_url( 'settings.php?page=' . IMSANITY_PLUGIN_FILE_REL ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
+		$settings_link = '<a href="' . imsanity_get_settings_link() . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
 	} else {
-		$settings_link = '<a href="' . admin_url( 'options-general.php?page=' . IMSANITY_PLUGIN_FILE_REL ) . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
+		$settings_link = '<a href="' . imsanity_get_settings_link() . '">' . esc_html__( 'Settings', 'imsanity' ) . '</a>';
 	}
 	array_unshift( $links, $settings_link );
 	return $links;
@@ -376,6 +388,17 @@ function imsanity_network_settings() {
 				<?php esc_html_e( 'Remove the large pre-scaled originals that WordPress retains for thumbnail generation.', 'imsanity' ); ?>
 			</td>
 		</tr>
+	<?php if ( is_file( imsanity_debug_log_path() ) ) : ?>
+		<tr>
+			<th><?php esc_html_e( 'Debug Log', 'imsanity' ); ?></th>
+			<td>
+				<p>
+					<a target='_blank' href='<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?action=imsanity_view_debug_log' ), 'imsanity-options' ) ); ?>'><?php esc_html_e( 'View Log', 'imsanity' ); ?></a> -
+					<a href='<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?action=imsanity_delete_debug_log' ), 'imsanity-options' ) ); ?>'><?php esc_html_e( 'Clear Log', 'imsanity' ); ?></a>
+				</p>
+			</td>
+		</tr>
+	<?php endif; ?>
 	</table>
 
 	<p class="submit"><input type="submit" class="button-primary" value="<?php esc_attr_e( 'Update Settings', 'imsanity' ); ?>" /></p>
@@ -562,6 +585,27 @@ function imsanity_register_settings() {
 	register_setting( 'imsanity-settings-group', 'imsanity_avif_quality', 'imsanity_avif_quality' );
 	register_setting( 'imsanity-settings-group', 'imsanity_webp_quality', 'imsanity_webp_quality' );
 	register_setting( 'imsanity-settings-group', 'imsanity_delete_originals', 'boolval' );
+}
+
+/**
+ * Set the quality based on the mime type of the image being resized.
+ *
+ * @param int    $quality The quality currently set.
+ * @param string $mime_type The mime type of the image being resized.
+ * @return int The (potentially) adjusted quality level.
+ */
+function imsanity_editor_quality( $quality, $mime_type = '' ) {
+	if ( 'image/avif' === $mime_type ) {
+		$new_quality = imsanity_avif_quality();
+	} elseif ( 'image/webp' === $mime_type ) {
+		$new_quality = imsanity_webp_quality();
+	} elseif ( 'image/jpeg' === $mime_type ) {
+		$new_quality = imsanity_jpg_quality();
+	}
+	if ( ! empty( $new_quality ) && $new_quality > 0 && $new_quality <= 92 ) {
+		return $new_quality;
+	}
+	return $quality;
 }
 
 /**
@@ -925,6 +969,17 @@ function imsanity_settings_page_form() {
 				<?php esc_html_e( 'Remove the large pre-scaled originals that WordPress retains for thumbnail generation.', 'imsanity' ); ?>
 			</td>
 		</tr>
+	<?php if ( is_file( imsanity_debug_log_path() ) ) : ?>
+		<tr>
+			<th><?php esc_html_e( 'Debug Log', 'imsanity' ); ?></th>
+			<td>
+				<p>
+					<a target='_blank' href='<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?action=imsanity_view_debug_log' ), 'imsanity-options' ) ); ?>'><?php esc_html_e( 'View Log', 'imsanity' ); ?></a> -
+					<a href='<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?action=imsanity_delete_debug_log' ), 'imsanity-options' ) ); ?>'><?php esc_html_e( 'Clear Log', 'imsanity' ); ?></a>
+				</p>
+			</td>
+		</tr>
+	<?php endif; ?>
 	</table>
 
 	<p class="submit"><input type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'imsanity' ); ?>" /></p>

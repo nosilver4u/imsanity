@@ -46,6 +46,14 @@ define( 'IMSANITY_SOURCE_OTHER', 4 );
  * @var string IMSANITY_PLUGIN_FILE
  */
 define( 'IMSANITY_PLUGIN_FILE', __FILE__ );
+
+/**
+ * The directory path of the main plugin file.
+ *
+ * @var string IMSANITY_PLUGIN_DIR
+ */
+define( 'IMSANITY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+
 /**
  * The path of the main plugin file, relative to the plugins/ folder.
  *
@@ -63,33 +71,13 @@ function imsanity_init() {
 /**
  * Import supporting libraries.
  */
+require_once plugin_dir_path( __FILE__ ) . 'libs/debug.php';
 require_once plugin_dir_path( __FILE__ ) . 'libs/utils.php';
 require_once plugin_dir_path( __FILE__ ) . 'settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'ajax.php';
 require_once plugin_dir_path( __FILE__ ) . 'media.php';
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once plugin_dir_path( __FILE__ ) . 'class-imsanity-cli.php';
-}
-
-/**
- * Use the EWWW IO debugging functions (if available).
- *
- * @param string $message A message to send to the debugger.
- */
-function imsanity_debug( $message ) {
-	if ( function_exists( 'ewwwio_debug_message' ) ) {
-		if ( ! is_string( $message ) ) {
-			if ( function_exists( 'print_r' ) ) {
-				$message = print_r( $message, true );
-			} else {
-				$message = 'not a string, print_r disabled';
-			}
-		}
-		ewwwio_debug_message( $message );
-		if ( function_exists( 'ewww_image_optimizer_debug_log' ) ) {
-			ewww_image_optimizer_debug_log();
-		}
-	}
 }
 
 /**
@@ -178,12 +166,19 @@ function imsanity_get_max_width_height( $source ) {
 function imsanity_handle_upload( $params ) {
 	imsanity_debug( __FUNCTION__ );
 
+	if ( empty( $params['file'] ) || empty( $params['type'] ) ) {
+		imsanity_debug( 'missing file or type parameter, skipping' );
+		return $params;
+	}
+
 	// If "noresize" is included in the filename then we will bypass imsanity scaling.
 	if ( strpos( $params['file'], 'noresize' ) !== false ) {
+		imsanity_debug( "skipping {$params['file']}" );
 		return $params;
 	}
 
 	if ( apply_filters( 'imsanity_skip_image', false, $params['file'] ) ) {
+		imsanity_debug( "skipping {$params['file']} per filter" );
 		return $params;
 	}
 
@@ -196,10 +191,11 @@ function imsanity_handle_upload( $params ) {
 		$params = imsanity_convert_to_jpg( 'png', $params );
 	}
 
-	// Make sure this is a type of image that we want to convert and that it exists.
+	// Store the path for reference in case $params is modified.
 	$oldpath = $params['file'];
 
 	// Let folks filter the allowed mime-types for resizing.
+	// Also allows conditional support for WebP and AVIF if the server supports it.
 	$allowed_types = apply_filters( 'imsanity_allowed_mimes', array( 'image/png', 'image/gif', 'image/jpeg' ), $oldpath );
 	if ( is_string( $allowed_types ) ) {
 		$allowed_types = array( $allowed_types );
@@ -215,6 +211,11 @@ function imsanity_handle_upload( $params ) {
 		filesize( $oldpath ) > 0 &&
 		in_array( $params['type'], $allowed_types, true )
 	) {
+		// If the Modern Image Formats plugin is active but fallback mode is disabled, permit conversion to AVIF/WebP during upload by defining IMSANITY_ALLOW_CONVERSION.
+		// Otherwise, no conversion should be allowed at all. The upload handler will still check for conversion and work with it if it happens somehow.
+		if ( ! defined( 'IMSANITY_ALLOW_CONVERSION' ) && function_exists( 'webp_uploads_is_fallback_enabled' ) && ! webp_uploads_is_fallback_enabled() ) {
+			define( 'IMSANITY_ALLOW_CONVERSION', true );
+		}
 
 		// figure out where the upload is coming from.
 		$source = imsanity_get_source();
@@ -326,6 +327,7 @@ function imsanity_convert_to_jpg( $type, $params ) {
 	imsanity_debug( __FUNCTION__ );
 
 	if ( apply_filters( 'imsanity_disable_convert', false, $type, $params ) ) {
+		imsanity_debug( "skipping conversion for {$params['file']}" );
 		return $params;
 	}
 
@@ -333,6 +335,7 @@ function imsanity_convert_to_jpg( $type, $params ) {
 
 	if ( 'bmp' === $type ) {
 		if ( ! function_exists( 'imagecreatefrombmp' ) ) {
+			imsanity_debug( 'imagecreatefrombmp does not exist' );
 			return $params;
 		}
 		$img = imagecreatefrombmp( $params['file'] );
