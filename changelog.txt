@@ -1,3 +1,13 @@
+= 2.9.0 =
+*Release Date - February 10, 2026*
+
+* added: support for resizing AVIF image uploads
+* added: settings for WebP and AVIF quality
+* added: support for Modern Image Formats plugin
+* added: PHP 8.5 compatibility
+* fixed: quality settings not applied
+* fixed: PNG alpha detection may throw errors if PHP GD cannot obtain information from a PNG image
+
 = 2.8.7 =
 *Release Date = August 6, 2024*
 
