@@ -229,7 +229,14 @@ function imsanity_handle_upload( $params ) {
 		$maxw = (int) $maxw;
 		$maxh = (int) $maxh;
 
-		list( $oldw, $oldh ) = getimagesize( $oldpath );
+		$dimensions = getimagesize( $oldpath );
+		if ( is_array( $dimensions ) && count( $dimensions ) >= 2 ) {
+			$oldw = $dimensions[0];
+			$oldh = $dimensions[1];
+		} else {
+			imsanity_debug( "could not get dimensions for $oldpath, skipping" );
+			return $params;
+		}
 
 		if ( ( $oldw > $maxw + 1 && $maxw > 0 ) || ( $oldh > $maxh + 1 && $maxh > 0 ) ) {
 

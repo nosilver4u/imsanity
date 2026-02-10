@@ -84,7 +84,12 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 			return;
 		}
 
-		list( $imagew, $imageh ) = getimagesize( $file_path );
+		$dimensions = getimagesize( $file_path );
+		if ( is_array( $dimensions ) && count( $dimensions ) >= 2 ) {
+			$imagew = $dimensions[0];
+			$imageh = $dimensions[1];
+		}
+
 		if ( empty( $imagew ) || empty( $imageh ) ) {
 			$imagew = $meta['width'];
 			$imageh = $meta['height'];

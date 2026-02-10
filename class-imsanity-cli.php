@@ -75,7 +75,11 @@ class Imsanity_CLI extends WP_CLI_Command {
 
 			$path = get_attached_file( $id );
 			if ( $path ) {
-				list( $imagew, $imageh ) = getimagesize( $path );
+				$dimensions = getimagesize( $path );
+				if ( is_array( $dimensions ) && count( $dimensions ) >= 2 ) {
+					$imagew = $dimensions[0];
+					$imageh = $dimensions[1];
+				}
 			}
 			if ( empty( $imagew ) || empty( $imageh ) ) {
 				continue;

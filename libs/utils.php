@@ -404,9 +404,15 @@ function imsanity_resize_from_id( $id = 0 ) {
 
 		$maxw = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
 		$maxh = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
+		$oldw = false;
+		$oldh = false;
 
 		// method one - slow but accurate, get file size from file itself.
-		list( $oldw, $oldh ) = getimagesize( $oldpath );
+		$dimensions = getimagesize( $oldpath );
+		if ( is_array( $dimensions ) && count( $dimensions ) >= 2 ) {
+			$oldw = $dimensions[0];
+			$oldh = $dimensions[1];
+		}
 		// method two - get file size from meta, fast but resize will fail if meta is out of sync.
 		if ( ! $oldw || ! $oldh ) {
 			$oldw = $meta['width'];
