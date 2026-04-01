@@ -495,6 +495,12 @@ function imsanity_get_multisite_settings() {
 		if ( ! property_exists( $_imsanity_multisite_settings, 'imsanity_delete_originals' ) ) {
 			$_imsanity_multisite_settings->imsanity_delete_originals = false;
 		}
+		if ( ! property_exists( $_imsanity_multisite_settings, 'imsanity_avif_quality' ) ) {
+			$_imsanity_multisite_settings->imsanity_avif_quality = IMSANITY_DEFAULT_AVIF_QUALITY;
+		}
+		if ( ! property_exists( $_imsanity_multisite_settings, 'imsanity_webp_quality' ) ) {
+			$_imsanity_multisite_settings->imsanity_webp_quality = IMSANITY_DEFAULT_WEBP_QUALITY;
+		}
 	}
 	return $_imsanity_multisite_settings;
 }

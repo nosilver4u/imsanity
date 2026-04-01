@@ -106,6 +106,12 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.9.1 =
+*Release Date - TBD*
+
+* changed: make the default settings filterable by other plugins/themes
+* fixed: undefined properties for AVIF/WebP quality on multi-site installations
+
 = 2.9.0 =
 *Release Date - February 10, 2026*
 
