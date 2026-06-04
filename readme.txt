@@ -2,8 +2,8 @@
 Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality
-Tested up to: 6.9
-Stable tag: 2.9.0
+Tested up to: 7.0
+Stable tag: 2.9.1
 License: GPLv3
 
 Automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
@@ -107,7 +107,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 == Changelog ==
 
 = 2.9.1 =
-*Release Date - TBD*
+*Release Date - June 4, 2026*
 
 * changed: make the default settings filterable by other plugins/themes
 * fixed: undefined properties for AVIF/WebP quality on multi-site installations

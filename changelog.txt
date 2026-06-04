@@ -1,3 +1,9 @@
+= 2.9.1 =
+*Release Date - June 4, 2026*
+
+* changed: make the default settings filterable by other plugins/themes
+* fixed: undefined properties for AVIF/WebP quality on multi-site installations
+
 = 2.9.0 =
 *Release Date - February 10, 2026*
 
