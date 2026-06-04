@@ -106,6 +106,11 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.9.2 =
+*Relase Date - TBD*
+
+* fixed: make sure options are not autoloaded by WordPress
+
 = 2.9.1 =
 *Release Date - June 4, 2026*
 
