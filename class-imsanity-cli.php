@@ -34,7 +34,9 @@ class Imsanity_CLI extends WP_CLI_Command {
 	public function resize( $args, $assoc_args ) {
 
 		// let's get started, shall we?
-		// imsanity_init();.
+		if ( ! defined( 'IMSANITY_DEFAULT_MAX_WIDTH' ) ) {
+			imsanity_init();
+		}
 		$maxw = imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH );
 		$maxh = imsanity_get_option( 'imsanity_max_height', IMSANITY_DEFAULT_MAX_HEIGHT );
 

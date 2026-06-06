@@ -173,6 +173,9 @@ function imsanity_multisite_table_schema_version() {
 function imsanity_get_default_multisite_settings() {
 	$data = new stdClass();
 
+	if ( ! defined( 'IMSANITY_DEFAULT_MAX_WIDTH' ) ) {
+		imsanity_init();
+	}
 	$data->imsanity_override_site      = false;
 	$data->imsanity_max_height         = IMSANITY_DEFAULT_MAX_HEIGHT;
 	$data->imsanity_max_width          = IMSANITY_DEFAULT_MAX_WIDTH;
@@ -694,6 +697,9 @@ function imsanity_webp_quality( $quality = null ) {
 function imsanity_adjust_default_threshold( $size, $imagesize = array(), $file = '' ) {
 	if ( false !== strpos( $file, 'noresize' ) ) {
 		return false;
+	}
+	if ( ! defined( 'IMSANITY_DEFAULT_MAX_WIDTH' ) ) {
+		imsanity_init();
 	}
 	$max_size = max(
 		imsanity_get_option( 'imsanity_max_width', IMSANITY_DEFAULT_MAX_WIDTH ),
