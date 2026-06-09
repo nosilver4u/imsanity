@@ -1,3 +1,9 @@
+= 2.9.2 =
+*Relase Date - June 9, 2026*
+
+* fixed: make sure options are not autoloaded by WordPress
+* fixed: fatal error when default constants not defined, usually due to early init by other plugins
+
 = 2.9.1 =
 *Release Date - June 4, 2026*
 

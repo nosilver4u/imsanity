@@ -3,7 +3,7 @@ Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality
 Tested up to: 7.0
-Stable tag: 2.9.1
+Stable tag: 2.9.2
 License: GPLv3
 
 Automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
@@ -107,7 +107,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 == Changelog ==
 
 = 2.9.2 =
-*Relase Date - TBD*
+*Relase Date - June 9, 2026*
 
 * fixed: make sure options are not autoloaded by WordPress
 * fixed: fatal error when default constants not defined, usually due to early init by other plugins
@@ -127,77 +127,6 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 * added: PHP 8.5 compatibility
 * fixed: quality settings not applied
 * fixed: PNG alpha detection may throw errors if PHP GD cannot obtain information from a PNG image
-
-= 2.8.7 =
-*Release Date = August 6, 2024*
-
-* added: change default permissions via imsanity_editor_permissions and imsanity_admin_permissions filters
-* changed: default permission to resize individual images changed to editor role
-
-= 2.8.6 =
-*Release Date - November 26, 2024*
-
-* fixed: fatal error if other plugins run big_image_size_threshold filter with too few arguments
-
-= 2.8.5 =
-*Release Date - November 12, 2024*
-
-* bumped WP tested version
-* changed: improve JSON handling/efficiency
-
-= 2.8.4 =
-*Release Date - April 29, 2024*
-
-* bumped WP tested version and PHP minimum
-
-= 2.8.3 =
-*Release Date - April 23, 2024*
-
-* changed: use updated WP coding standards
-* fixed: PHP 8 error trying to do math with string values
-
-= 2.8.2 =
-*Release Date - October 5, 2022*
-
-* fixed: mime type error when filename in attachment metadata is incorrect
-
-= 2.8.1 =
-*Release Date - June 16, 2022*
-
-* changed: escape and sanitize more things
-* changed: tighten PHPCS rules used for pre-release testing
-
-= 2.8.0 =
-*Release Date - May 18, 2022*
-
-* added: support for resizing WebP images via ImageMagick
-* changed: update attachment file size to keep WP 6.0 metadata in sync
-* changed: use original image for resizing if full size version was scaled by WordPress
-* fixed: JS scroller during bulk resize causes unexpected behavior
-
-= 2.7.2 =
-*Release Date - June 3, 2021*
-
-* fixed: delete originals might remove full-size version in rare cases
-* fixed: error thrown for image that is 1 pixel larger than max dimensions
-
-= 2.7.1 =
-*Release Date - November 24, 2020*
-
-* changed: clarify text for queue reset button
-* changed: Delete Originals function in bulk/selective resizer will clean metadata if original image is already gone
-
-= 2.7.0 =
-*Release Date - November 18, 2020*
-
-* changed: bulk resizer will resize all images with no limits, use list mode for selective resizing
-* added: see current dimensions and resize individual images in Media Library list mode
-* added: imsanity_disable_convert filter to bypass BMP/PNG to JPG conversion options conditionally
-* added: imsanity_skip_image filter to bypass resizing programmatically
-* added: ability to remove pre-scaled original image backup (in bulk or selectively)
-* changed: PNG images will not be converted if transparency is found
-* fixed: BMP files not converted when server uses image/x-ms-bmp as mime identifier
-* removed: Deep Scan option is the default behavior now, no need for configuration
 
 = Earlier versions =
 Please refer to the separate changelog.txt file.
