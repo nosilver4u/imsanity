@@ -3,7 +3,7 @@ Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: image, scale, resize, space saver, quality
 Tested up to: 7.0
-Stable tag: 2.9.2
+Stable tag: 2.9.3
 License: GPLv3
 
 Automatically resizes huge image uploads. Are contributors uploading huge photos? Tired of manually resizing your images? Imsanity to the rescue!
@@ -107,7 +107,7 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 == Changelog ==
 
 = 2.9.3 =
-*Release Date - TBD*
+*Release Date - July 28, 2026*
 
 * fixed: incomplete fix for default constants not defined
 * fixed: PHP notice when checking memory limit
