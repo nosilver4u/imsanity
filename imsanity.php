@@ -183,7 +183,7 @@ function imsanity_get_max_width_height( $source ) {
  * Handler after a file has been uploaded.  If the file is an image, check the size
  * to see if it is too big and, if so, resize and overwrite the original.
  *
- * @param Array $params The parameters submitted with the upload.
+ * @param array $params The parameters submitted with the upload.
  */
 function imsanity_handle_upload( $params ) {
 	imsanity_debug( __FUNCTION__ );
@@ -197,6 +197,11 @@ function imsanity_handle_upload( $params ) {
 	if ( strpos( $params['file'], 'noresize' ) !== false ) {
 		imsanity_debug( "skipping {$params['file']}" );
 		return $params;
+	}
+
+	// Make sure default constants are defined, just in case this triggers before the init action.
+	if ( ! defined( 'IMSANITY_DEFAULT_MAX_WIDTH' ) ) {
+		imsanity_init();
 	}
 
 	if ( apply_filters( 'imsanity_skip_image', false, $params['file'] ) ) {
@@ -354,6 +359,10 @@ function imsanity_handle_upload( $params ) {
  */
 function imsanity_convert_to_jpg( $type, $params ) {
 	imsanity_debug( __FUNCTION__ );
+
+	if ( ! defined( 'IMSANITY_DEFAULT_QUALITY' ) ) {
+		imsanity_init();
+	}
 
 	if ( apply_filters( 'imsanity_disable_convert', false, $type, $params ) ) {
 		imsanity_debug( "skipping conversion for {$params['file']}" );

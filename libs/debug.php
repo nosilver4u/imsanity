@@ -19,10 +19,10 @@ function imsanity_memory_limit() {
 	} elseif ( function_exists( 'ini_get' ) ) {
 		$memory_limit = ini_get( 'memory_limit' );
 	} else {
+		// Conservative default, current usage + 16M.
+		$current_memory = memory_get_usage( true );
+		$memory_limit   = round( $current_memory / ( 1024 * 1024 ) ) + 16;
 		if ( ! defined( 'IMSANITY_MEMORY_LIMIT' ) ) {
-			// Conservative default, current usage + 16M.
-			$current_memory = memory_get_usage( true );
-			$memory_limit   = round( $current_memory / ( 1024 * 1024 ) ) + 16;
 			define( 'IMSANITY_MEMORY_LIMIT', $memory_limit );
 		}
 	}
@@ -92,7 +92,7 @@ function imsanity_debug_log() {
 }
 
 /**
- * Use the EWWW IO debugging functions (if available).
+ * Add a message to the debug log (in memory).
  *
  * @param string $message A message to send to the debugger.
  */

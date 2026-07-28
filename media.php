@@ -96,7 +96,7 @@ function imsanity_custom_column( $column_name, $id, $meta = null ) {
 		}
 
 		if ( empty( $imagew ) || empty( $imageh ) ) {
-			echo esc_html( 'Unknown dimensions', 'imsanity' );
+			echo esc_html__( 'Unknown dimensions', 'imsanity' );
 			return;
 		}
 		echo '<div>' . (int) $imagew . 'w x ' . (int) $imageh . 'h</div>';

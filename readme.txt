@@ -106,6 +106,13 @@ Questions may be posted on the support forum at https://wordpress.org/support/pl
 
 == Changelog ==
 
+= 2.9.3 =
+*Release Date - TBD*
+
+* fixed: incomplete fix for default constants not defined
+* fixed: PHP notice when checking memory limit
+* fixed: string missing i18n
+
 = 2.9.2 =
 *Relase Date - June 9, 2026*
 
