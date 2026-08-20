@@ -18,7 +18,7 @@ add_filter( 'plugin_action_links_' . IMSANITY_PLUGIN_FILE_REL, 'imsanity_setting
 add_filter( 'network_admin_plugin_action_links_' . IMSANITY_PLUGIN_FILE_REL, 'imsanity_settings_link' );
 add_action( 'admin_enqueue_scripts', 'imsanity_queue_script' );
 add_action( 'admin_init', 'imsanity_register_settings' );
-add_filter( 'big_image_size_threshold', 'imsanity_adjust_default_threshold', 10, 3 );
+add_filter( 'big_image_size_threshold', '__return_false' );
 
 register_activation_hook( IMSANITY_PLUGIN_FILE_REL, 'imsanity_maybe_created_custom_table' );
 

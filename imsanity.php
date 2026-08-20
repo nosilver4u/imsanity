@@ -14,8 +14,8 @@ Plugin URI: https://wordpress.org/plugins/imsanity/
 Description: Imsanity stops insanely huge image uploads
 Author: Exactly WWW
 Domain Path: /languages
-Version: 2.9.3
-Requires at least: 6.7
+Version: 2.9.4
+Requires at least: 6.8
 Requires PHP: 7.4
 Author URI: https://ewww.io/about/
 License: GPLv3
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IMSANITY_VERSION', '2.9.3' );
+define( 'IMSANITY_VERSION', '2.9.4' );
 define( 'IMSANITY_SCHEMA_VERSION', '1.1' );
 
 define( 'IMSANITY_SOURCE_POST', 1 );
@@ -188,6 +188,11 @@ function imsanity_get_max_width_height( $source ) {
 function imsanity_handle_upload( $params ) {
 	imsanity_debug( __FUNCTION__ );
 
+	$request_uri = add_query_arg( '', '' );
+	if ( wp_is_rest_endpoint() && preg_match( '#wp/v2/media/\d+/sideload#', $request_uri ) && isset( $_REQUEST['image_size'] ) && ! empty( $_REQUEST['image_size'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		imsanity_debug( 'sub-sizes sideloading, can\'t touch this!' );
+		return $params;
+	}
 	if ( empty( $params['file'] ) || empty( $params['type'] ) ) {
 		imsanity_debug( 'missing file or type parameter, skipping' );
 		return $params;

@@ -1,3 +1,9 @@
+= 2.9.4 =
+*Release Date - August 20, 2026*
+
+* fixed: compat with WP 7.1 - prevent new client-side processing from scaling the original too early
+* fixed: prevent resizing of sideloaded thumbs from new client-side processing
+
 = 2.9.3 =
 *Release Date - July 28, 2026*
 
